@@ -23,7 +23,7 @@
 #import "NSObject+MTReady.h"
 #import "NSString+MonkeyTalk.h"
 #import "MTOrdinalView.h"
-
+#import "MTCache.h"
 
 #define MTTextFieldStateKey @"MTTextFieldState"
 
@@ -39,6 +39,11 @@
 @interface MTDefaultTextFieldDelegate : NSObject <UITextFieldDelegate>
 @end
 @implementation MTDefaultTextFieldDelegate
+
+- (void)dealloc {
+    NSLog(@"deallocating %@", self);
+}
+
 @end
 
 
@@ -83,7 +88,8 @@ typedef enum {
 	[del interceptMethod:@selector(textFieldDidEndEditing:) withClass:[self class] types:"v@:@"];	
 	[del interceptMethod:@selector(textField:shouldChangeCharactersInRange:replacementString:) withClass:[self class] types:"c@:@@@"];	
 	[del interceptMethod:@selector(textFieldShouldClear:) withClass:[self class] types:"c@:@"];
-	
+    [MTCache add:del];
+    
 	[self mtSetDelegate:del];
 	
 }

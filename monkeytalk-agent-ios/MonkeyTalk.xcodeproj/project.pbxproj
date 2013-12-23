@@ -290,6 +290,8 @@
 		D3B914F912303288003C5BB0 /* UISegmentedControlProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = D3B914F812303288003C5BB0 /* UISegmentedControlProxy.m */; };
 		D3B915141230337D003C5BB0 /* UITabBarButtonLabelProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = D3B915131230337D003C5BB0 /* UITabBarButtonLabelProxy.h */; };
 		D3B91517123033C4003C5BB0 /* UITabBarButtonLabelProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = D3B91516123033C4003C5BB0 /* UITabBarButtonLabelProxy.m */; };
+		FAB9AD14186899DE0045D46B /* MTCache.h in Headers */ = {isa = PBXBuildFile; fileRef = FAB9AD12186899DE0045D46B /* MTCache.h */; };
+		FAB9AD15186899DE0045D46B /* MTCache.m in Sources */ = {isa = PBXBuildFile; fileRef = FAB9AD13186899DE0045D46B /* MTCache.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -749,6 +751,8 @@
 		D3B914F812303288003C5BB0 /* UISegmentedControlProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UISegmentedControlProxy.m; sourceTree = "<group>"; };
 		D3B915131230337D003C5BB0 /* UITabBarButtonLabelProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UITabBarButtonLabelProxy.h; sourceTree = "<group>"; };
 		D3B91516123033C4003C5BB0 /* UITabBarButtonLabelProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UITabBarButtonLabelProxy.m; sourceTree = "<group>"; };
+		FAB9AD12186899DE0045D46B /* MTCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTCache.h; sourceTree = "<group>"; };
+		FAB9AD13186899DE0045D46B /* MTCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTCache.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1265,6 +1269,8 @@
 				44D06B8817DE13D900D6F3AC /* NSRegularExpression+MonkeyTalk.m */,
 				44437123180CA5AC0049B25E /* UIViewController+MTReady.h */,
 				44437124180CA5AC0049B25E /* UIViewController+MTReady.m */,
+				FAB9AD12186899DE0045D46B /* MTCache.h */,
+				FAB9AD13186899DE0045D46B /* MTCache.m */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -1556,6 +1562,7 @@
 				2B21117D17CC018F00574E79 /* UILabel+MTReady.h in Headers */,
 				44D06B8917DE13D900D6F3AC /* NSRegularExpression+MonkeyTalk.h in Headers */,
 				44C0071617FCBF00005FA9BB /* UIView+MTFinder.h in Headers */,
+				FAB9AD14186899DE0045D46B /* MTCache.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2007,6 +2014,7 @@
 				443846091742D65E00E8EAFF /* UILongPressGestureRecognizerProxy.m in Sources */,
 				2B21117E17CC018F00574E79 /* UILabel+MTReady.m in Sources */,
 				44D06B8A17DE13D900D6F3AC /* NSRegularExpression+MonkeyTalk.m in Sources */,
+				FAB9AD15186899DE0045D46B /* MTCache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
