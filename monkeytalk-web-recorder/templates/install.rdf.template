@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+    <Description about="urn:mozilla:install-manifest">
+        <em:id>monkeytalkrecorder@gorillalogic.com</em:id>
+        <em:name>MonkeyTalk Recorder</em:name>
+        <em:version>VERSION</em:version>
+        <em:developer>Shinya Kasatani</em:developer>
+        <em:developer>Adam Goucher</em:developer>
+        <em:developer>Samit Badle</em:developer>
+        <em:developer>Dave Hunt</em:developer>
+        <em:developer>Stu Stern</em:developer>
+        <em:creator>Gorilla Logic</em:creator>        
+        <em:description>MonkeyTalk Recorder for Firefox</em:description>
+        <em:type>2</em:type>
+        <em:homepageURL>http://www.gorillalogic.com/monkeytalk</em:homepageURL>
+        <!-- <em:optionsURL>chrome://selenium-ide/content/optionsDialog.xul</em:optionsURL> -->
+        <!-- <em:updateURL>https://addons.seleniumhq.org/se-ide/update.rdf</em:updateURL> -->
+        <em:iconURL>chrome://selenium-ide/content/images/MonkeyTalk_ICON_32.png</em:iconURL>
+        <em:icon64URL>chrome://selenium-ide/content/images/MonkeyTalk_ICON_64.png</em:icon64URL>
+        <em:unpack>true</em:unpack>
+
+        <em:targetApplication>
+          <Description>
+            <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id> <!-- firefox -->
+            <em:minVersion>3.6.*</em:minVersion>
+            <em:maxVersion>100</em:maxVersion>
+          </Description>
+        </em:targetApplication>
+
+    </Description>
+</RDF>

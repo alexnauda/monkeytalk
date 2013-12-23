@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="com.gorillalogic.monkeyconsole.preferences.FonemonkeyPreferencePage"
+            id="com.gorillalogic.monkeyconsole.preferences.FonemonkeyPreferencePage"
+            name="MonkeyTalk Preferences">
+      </page>
+      <page
+            class="com.gorillalogic.monkeyconsole.preferences.CloudMonkeyAppliancePreferencePage"
+            id="com.gorillalogic.monkeyconsole.preferences.CloudMonkeyAppliancePreferencePage"
+            name="CloudMonkey Appliance Preferences">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="com.gorillalogic.monkeyconsole.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="MonkeyTalk"
+            id="MonkeyTalkWizard">
+      </category>
+      <wizard
+            name="Script"
+            icon="icons/mt-icon-16.png"
+            category="MonkeyTalkWizard"
+            class="com.gorillalogic.monkeyconsole.wizard.NewTestWizard"
+            id="com.gorillalogic.monkeyconsole.wizard.NewTestWizard">
+      </wizard>
+      <wizard
+            name="Test Suite"
+            icon="icons/mt-icon-16.png"
+            category="MonkeyTalkWizard"
+            class="com.gorillalogic.monkeyconsole.wizard.NewTestSuiteWizard"
+            id="com.gorillalogic.monkeyconsole.wizard.NewTestSuiteWizard">
+      </wizard>
+      <wizard
+            category="MonkeyTalkWizard"
+            class="com.gorillalogic.monkeyconsole.wizard.NewProjectWizard"
+            icon="icons/mt-icon-16.png"
+            id="com.gorillalogic.monkeyconsole.wizard.NewProjectWizard"
+            name="MonkeyTalk Project"
+            project="true">
+      </wizard>
+   </extension>
+   
+<extension  
+  point="org.eclipse.ui.navigator.navigatorContent">
+   <navigatorContent
+         contentProvider="com.gorillalogic.monkeyconsole.navigator.ContentProvider"
+         id="com.gorillalogic.monkeytalk.ide.navigatorContent"
+         labelProvider="com.gorillalogic.monkeyconsole.navigator.LabelProvider"
+         name="Monkey Navigator Content">
+      <triggerPoints>
+         <or>
+            <instanceof
+                  value="com.gorillalogic.monkeyconsole.navigator.CustomProjectWorkbenchRoot">
+            </instanceof>
+         </or>
+      </triggerPoints>
+   </navigatorContent>
+ <commonWizard
+      type="new"
+   wizardId="com.gorillalogic.monkeyconsole.wizard.NewProjectWizard">
+  <enablement>   
+    <or>
+    <adapt type="org.eclipse.core.resources.IFile" /> 
+    <adapt type="org.eclipse.core.resources.IFolder" />
+           <adapt type="org.eclipse.core.resources.IProject" /> 
+             <adapt type="org.eclipse.core.resources.IWorkspaceRoot" /> 
+   </or>
+   </enablement>
+ </commonWizard>
+  <commonWizard
+      type="new"
+   wizardId="com.gorillalogic.monkeyconsole.wizard.NewTestSuiteWizard">
+  <enablement>
+   <or>
+    <adapt type="org.eclipse.core.resources.IFile" /> 
+    <adapt type="org.eclipse.core.resources.IFolder" />
+           <adapt type="org.eclipse.core.resources.IProject" /> 
+             <adapt type="org.eclipse.core.resources.IWorkspaceRoot" /> 
+   </or>
+  </enablement>   
+ </commonWizard>
+  <commonWizard
+      type="new"
+   wizardId="com.gorillalogic.monkeyconsole.wizard.NewTestWizard">
+  <enablement>
+   <or>
+    <adapt type="org.eclipse.core.resources.IFile" /> 
+    <adapt type="org.eclipse.core.resources.IFolder" />
+           <adapt type="org.eclipse.core.resources.IProject" /> 
+             <adapt type="org.eclipse.core.resources.IWorkspaceRoot" /> 
+   </or>
+  </enablement>   
+ </commonWizard>
+</extension>    
+   
+   
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="com.gorillalogic.monkeyconsole.editors.FoneMonkeyTestEditor"
+            contributorClass="com.gorillalogic.monkeyconsole.editors.FoneMonkeyTestContributor"
+            extensions="mt, mts"
+            icon="icons/mt-icon-16.png"
+            id="com.gorillalogic.monkeyconsole.editors.FoneMonkeyTestEditor"
+            name="MonkeyTalk Test Editor">
+      </editor>
+       <editor
+            name="MonkeyTalk JS Editor"
+            icon="icons/mt-icon-16.png"
+            contributorClass="com.gorillalogic.monkeyconsole.editors.FoneMonkeyTestContributor"
+            class="com.gorillalogic.monkeyconsole.editors.FoneMonkeyJSEditor"
+            symbolicFontName="org.eclipse.wst.jsdt.ui.editors.textfont"
+            id="org.eclipse.wst.jsdt.ui.CompilationUnitEditor"
+            extensions="js">
+            <contentTypeBinding contentTypeId="org.eclipse.wst.jsdt.core.jsSource" />
+      </editor>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.ui.ide.workbench"
+            name="MonkeyTalkIDE">
+         <property
+               name="appName"
+               value="MonkeyTalkIDE">
+         </property>
+         <property
+               name="aboutImage"
+               value="icons/about.png">
+         </property>
+         <property name="aboutText" value="MonkeyTalk IDE v1.0.63-SNAPSHOT (build 70) | Copyright 2012-2013 Gorilla Logic, Inc. | http://www.gorillalogic.com/monkeytalk">
+         </property>
+         <property
+               name="windowImages"
+               value="icons/mt-icon-16.png,icons/mt-icon-32.png,icons/mt-icon-48.png,icons/mt-icon-64.png,icons/mt-icon-128.png">
+         </property>
+		<property
+  			name="preferenceCustomization"
+  			value="plugin_customization.ini"/>         
+  			<property name="introBrandingImage" value="icons/mt-icon-64.png"/>
+		 <property name="introTitle" value="MonkeyTalk IDE"/>   
+		 <property name="introDescription-overview" value="Welcome to MonkeyTalk!"/> 		
+      	</product>
+  	
+      	
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="com.gorillalogic.monkeyconsole.perspectives.TestPerspective"
+            icon="icons/mt-icon-16.png"
+            id="com.gorillalogic.monkeytalk.ide.TestPerspective"
+            name="MonkeyTalk">
+      </perspective>
+   </extension>
+   <extension id="monkeyTalkIDE" point="org.eclipse.core.runtime.applications"> 
+      <application> 
+         <run class="com.gorillalogic.monkeyconsole.MonkeyApplication"/> 
+      </application> 
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro">
+      <introProductBinding
+            introId="org.eclipse.ui.intro.universal"
+            productId="com.gorillalogic.monkeytalk.ide.product"/>         
+   </extension>
+       <extension
+        point="org.eclipse.ui.intro.configExtension">
+     <configExtension
+           content="introData.xml"
+           configId="org.eclipse.ui.intro.universalConfig">
+     </configExtension>
+     </extension>
+
+       <extension
+         point="org.eclipse.ui.commands">  
+      <command
+            defaultHandler="com.gorillalogic.monkeyconsole.commands.NewProjectHandler"							
+            id="com.gorillalogic.monkeyconsole.commands.NewProjectHandler"
+            name="NewProject">
+      </command>
+
+   </extension>  
+    
+   <!-- extension
+         point="org.eclipse.ui.intro">
+      <intro
+            class="org.eclipse.ui.intro.config.CustomizableIntroPart"
+            id="com.gorillalogic.monkeytalk.ide.intro">
+      </intro>
+      <introProductBinding
+            introId="com.gorillalogic.monkeytalk.ide.intro"
+            productId="com.gorillalogic.monkeytalk.ide.product">
+      </introProductBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro.config">
+      <config
+            content="introContent.xml"
+            id="com.gorillalogic.monkeytalk.ide.introConfigId"
+            introId="com.gorillalogic.monkeytalk.ide.intro">
+         <presentation
+               home-page-id="welcome">
+            <implementation
+                  kind="html"
+                  os="win32,linux,macosx"
+                  style="content/shared.css">
+            </implementation>
+         </presentation>
+      </config>
+   </extension -->
+
+<extension
+      id="com.gorillalogic.monkeyconsole.componentview"
+      name="Component Tree"
+      point="org.eclipse.ui.views">
+   <view
+         name="Component Tree"
+         icon="icons/coolbaricons/tree.png"
+         class="com.gorillalogic.monkeyconsole.componentview.ui.UIContainerView"
+         id="com.gorillalogic.monkeyconsole.componentview.ui.UIContainerView">
+   </view>
+   <view
+         category="com.gorillalogic.monkeytalk.ide.navigator.category"
+         class="com.gorillalogic.monkeyconsole.navigator.MonkeyNavigator"
+         icon="icons/mt-icon-16.png"
+         id="com.gorillalogic.monkeytalk.ide.navigator"
+         name="MonkeyTalk Navigator">
+   </view>
+   <category
+         id="com.gorillalogic.monkeytalk.ide.navigator.category"
+         name="Monkey projects">
+   </category>
+</extension>
+<extension
+      id="com.gorillalogic.monkeyconsole.cloudrunnerview"
+      name="Cloud Runner"
+      point="org.eclipse.ui.views">
+   <view
+         name="CloudMonkey Status"
+         icon="icons/coolbaricons/cloud.png"
+         class="com.gorillalogic.monkeyconsole.cloudview.ui.UICloudView"
+         id="com.gorillalogic.monkeyconsole.cloudview.ui.UICloudView">
+   </view>
+</extension>
+<!--<extension
+    point = "org.eclipse.ui.editorActions">
+      <editorContribution 
+         id="org.eclipse.wst.jsdt.internal.ui.javaeditor.monkeytalk" 
+         targetID="org.eclipse.wst.jsdt.ui.CompilationUnitEditor">        
+	   <action id="org.eclipse.wst.jsdt.internal.ui.javaeditor.monkeytalk.runaction" 
+              label="Run Script" 
+              toolbarPath="RunScript" 
+              icon="icons/coolbaricons/play.gif" 
+              tooltip="Run Script" 
+              state="false"
+              class="com.gorillalogic.monkeytalk.ide.jsdt.commands.RunJsHandler"
+              definitionId="org.eclipse.wst.jsdt.internal.ui.javaeditor.monkeytalk.runaction"
+              /> 
+      </editorContribution>
+ </extension>-->
+   <extension
+         id="com.gorillalogic.monkeyconsole.builder.monkeyTalkBuilder"
+         name="MonkeyTalk Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="com.gorillalogic.monkeyconsole.builder.MonkeyTalkBuilder">
+         </run>
+      </builder>
+   </extension>
+    <extension
+         id="com.gorillalogic.monkeyconsole.builder.monkeyTalkNature"
+         name="MonkeyTalk Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="com.gorillalogic.monkeyconsole.builder.MonkeyTalkNature">
+         </run>
+      </runtime>
+      <builder
+            id="com.gorillalogic.monkeyconsole.builder.monkeyTalkBuilder">
+      </builder>
+   </extension>
+      <extension
+         id="com.gorillalogic.monkeyconsole.builder.monkeyTalkProblem"
+         name="MonkeyTalk Problem"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+      <extension
+            point="org.eclipse.ui.navigator.viewer">
+            <popupMenu
+               id="customnavigator.navigator#PopupMenu">
+            <insertionPoint
+                  name="group.new">
+            </insertionPoint>
+            <insertionPoint
+                  name="group.build"
+                  separator="true">
+            </insertionPoint>
+         </popupMenu>
+         <viewerActionBinding
+               viewerId="com.example.test">
+            <includes>
+               <actionExtension
+                     pattern="org.eclipse.ui.navigator.resources.*">
+               </actionExtension>
+            </includes>
+         </viewerActionBinding>
+         <viewerContentBinding
+               viewerId="com.example.test">
+            <includes>
+               <contentExtension
+                     pattern="org.eclipse.ui.navigator.resourceContent">
+               </contentExtension>
+               <contentExtension
+                     pattern="org.eclipse.ui.navigator.resources.filters.*">
+               </contentExtension>
+               <contentExtension
+                     pattern="org.eclipse.ui.navigator.resources.linkHelper">
+               </contentExtension>
+               <contentExtension
+                     pattern="org.eclipse.ui.navigator.resources.workingSets">
+               </contentExtension>
+            </includes>
+         </viewerContentBinding>
+         <viewerActionBinding
+               viewerId="com.gorillalogic.monkeytalk.ide.navigator">
+            <includes>
+               <actionExtension
+                     pattern="org.eclipse.ui.navigator.resources.*">
+               </actionExtension>
+            </includes>
+         </viewerActionBinding>
+         <viewerContentBinding
+               viewerId="com.gorillalogic.monkeytalk.ide.navigator">
+            <includes>
+            <contentExtension
+                     pattern="org.eclipse.ui.navigator.resourceContent">
+               </contentExtension>
+               <contentExtension
+                     pattern="org.eclipse.ui.navigator.resources.filters.*">
+               </contentExtension>
+               <contentExtension
+                     pattern="org.eclipse.ui.navigator.resources.linkHelper">
+               </contentExtension>
+               <contentExtension
+                     pattern="org.eclipse.ui.navigator.resources.workingSets">
+               </contentExtension>
+               <contentExtension
+                     pattern="com.gorillalogic.monkeytalk.ide.navigatorContent">
+               </contentExtension>
+            </includes>
+         </viewerContentBinding>
+      </extension>
+      <extension
+            point="org.eclipse.ui.perspectiveExtensions">
+         <perspectiveExtension
+               targetID="com.gorillalogic.monkeytalk.ide.TestPerspective">
+            <view
+                  id="com.gorillalogic.monkeytalk.ide.navigator"
+                  minimized="false"
+                  ratio="0.25"
+                  relationship="left"
+                  relative="org.eclipse.ui.editorss">
+            </view>
+         </perspectiveExtension>
+      </extension>
+
+	<!-- BEGINS EXTENSION POINT FOR DEMO EMULATOR -->
+	<extension
+			point="org.eclipse.ui.commands">
+		<category
+				name="Run"
+				id="com.gorillalogic.monkeyconsole.emulator.category.run">
+		</category>
+		<command
+				name="Start Android Emulator"
+				categoryId="com.gorillalogic.monkeyconsole.emulator.category.run"
+				id="com.gorillalogic.monkeyconsole.emulator.commands.startEmulatorCommand">
+		</command>
+	</extension>
+	<extension
+			point="org.eclipse.ui.handlers">
+		<handler
+				commandId="com.gorillalogic.monkeyconsole.emulator.commands.startEmulatorCommand"
+				class="com.gorillalogic.monkeyconsole.emulator.StartEmulatorHandler">
+		</handler>
+	</extension>
+	<extension
+				point="org.eclipse.ui.menus">
+		<menuContribution
+				locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+			<menu
+					label="Extras"
+					mnemonic="X"
+					id="com.gorillalogic.monkeyconsole.extrasMenu">
+				<command
+						commandId="com.gorillalogic.monkeyconsole.emulator.commands.startEmulatorCommand"
+						mnemonic="E"
+						id="com.gorillalogic.monkeyconsole.menus.startEmulatorCommand">
+				</command>
+			</menu>
+		</menuContribution>
+		<menuContribution
+				locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+				<toolbar
+						id="com.gorillalogic.monkeyconsole.toolbars.emulatorToolbar">
+					<command
+						commandId="com.gorillalogic.monkeyconsole.emulator.commands.startEmulatorCommand"
+						icon="icons/mt-emulator-icon.png"
+						tooltip="Start the MonkeyTalk Android Emulator"
+						id="ccom.gorillalogic.monkeyconsole.toolbars.startEmulatorCommandItem">
+					</command>
+				</toolbar>
+		</menuContribution>
+	</extension>
+	<!-- END EXTENSIONS FOR DEMO EMULATOR -->
+	
+
+   
+</plugin>

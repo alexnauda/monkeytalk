@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Sample3">
+	<property name="src.dir" value="${basedir}/src" />
+	<property name="build.dir" value="${basedir}/bin" />
+	<property name="report.dir" value="${basedir}/reports" />
+
+	<path id="classpath">
+		<pathelement location="${build.dir}" />
+		<pathelement location="${basedir}/libs/junit-4.11.jar" />
+		<pathelement location="${basedir}/libs/hamcrest-core-1.3.jar" />
+		<pathelement location="${basedir}/libs/monkeytalk-java-all-in-one.jar" />
+	</path>
+
+	<target name="clean">
+		<echo message="clean..." />
+		<delete dir="${build.dir}" />
+		<mkdir dir="${build.dir}" />
+		<delete dir="${report.dir}" />
+		<mkdir dir="${report.dir}" />
+	</target>
+
+	<target name="compile" depends="clean">
+		<echo message="compile..." />
+
+		<property name="out.classpath" refid="classpath" />
+		<echo message="classpath is: ${out.classpath}" />
+
+		<javac srcdir="${src.dir}" destdir="${build.dir}"
+			includeantruntime="false" source="1.6" target="1.6" fork="yes">
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+
+	<target name="test" depends="clean,compile">
+		<echo message="run tests..." />
+		<junit printsummary="yes" haltonfailure="yes">
+			<formatter type="xml" />
+			<classpath refid="classpath" />
+			<batchtest fork="yes" todir="${report.dir}">
+				<fileset dir="${basedir}/src">
+					<include name="**/*Test.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+
+		<!-- merge individual JUnit xml's into master xml, and make pretty html 
+			too -->
+		<echo message="make pretty summary report..." />
+		<junitreport todir="${report.dir}" tofile="master.xml">
+			<fileset dir="${report.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="noframes" todir="${report.dir}" />
+		</junitreport>
+
+		<!-- rename html output -->
+		<move file="${report.dir}/junit-noframes.html" tofile="${report.dir}/master.html" />
+	</target>
+</project>

@@ -1,0 +1,101 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>monkeytalk-web-recorder</artifactId>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>com.gorillalogic.monkeytalk</groupId>
+		<artifactId>monkeytalk</artifactId>
+		<version>1.0.63-SNAPSHOT</version>
+	</parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>build-xpi</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<property environment="env" />
+								<property name="bin" value="${basedir}/bin" />
+								<property name="xpi" value="${bin}/xpi" />
+								<property name="install" value="${xpi}/install.rdf" />
+								<property name="readme" value="${xpi}/readme.txt" />
+								<property name="target" value="${bin}/monkeytalk-recorder-${project.version}.xpi" />
+
+								<condition property="ver"
+									value="${project.version}.${env.BUILD_NUMBER}" else="${project.version}.local">
+									<isset property="env.BUILD_NUMBER" />
+								</condition>
+
+								<echo message="building monkeytalk-recorder.xpi v${ver}" />
+								<mkdir dir="${xpi}" />
+								<copy file="${basedir}/templates/install.rdf.template" tofile="${install}" />
+								<copy file="${basedir}/templates/readme.txt.template" tofile="${readme}" />
+
+								<replace file="${install}" token="VERSION" value="${ver}" />
+								<replace file="${readme}" token="VERSION" value="${ver}" />
+
+								<replace file="${install}" token="-SNAPSHOT" value="" />
+								<replace file="${readme}" token="-SNAPSHOT" value="" />
+
+								<copy todir="${xpi}">
+									<fileset dir="${basedir}/monkeytalk-recorder">
+										<exclude name="**/build/**" />
+										<exclude name="**/monkeytalk-recorder.xpi" />
+										<exclude name="**/build.sh" />
+										<exclude name="**/config_build.sh" />
+									</fileset>
+								</copy>
+
+								<zip destfile="${target}" basedir="${xpi}" />
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>attach-artifacts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>bin/monkeytalk-recorder-${project.version}.xpi</file>
+									<type>xpi</type>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies />
+</project>
+
+
+
+
+
+
+
+
+

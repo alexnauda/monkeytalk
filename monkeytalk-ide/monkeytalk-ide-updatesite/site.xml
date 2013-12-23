@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description>
+      MonkeyTalk update site at Gorilla Logic, Inc.
+   </description>
+   <feature url="features/com.gorillalogic.monkeytalk.ide.feature_1.0.63.qualifier.jar" id="com.gorillalogic.monkeytalk.ide.feature" version="1.0.63.qualifier">
+      <category name="com.gorillalogic.monkeytalk.ide"/>
+   </feature>
+   <category-def name="com.gorillalogic.monkeytalk.ide" label="MonkeyTalk IDE"/>
+</site>

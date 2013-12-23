@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+<title>Forms</title>
+<script>
+function makeOutput() {
+  var dd = document.getElementById("myDropdown");
+
+  document.getElementById('output').innerHTML = document.getElementById('myInput').value
+    + ' | ' + document.getElementById('myTextarea').value
+    + ' | ' + dd.options[dd.selectedIndex].value
+    + ' |'
+    + (document.getElementById('myRadioA').checked ? ' A' : '')
+    + (document.getElementById('myRadioB').checked ? ' B' : '')
+    + (document.getElementById('myRadioC').checked ? ' C' : '')
+    + ' |'
+    + (document.getElementById('myCheckD').checked ? ' D' : '')
+    + (document.getElementById('myCheckE').checked ? ' E' : '')
+    + (document.getElementById('myCheckF').checked ? ' F' : '');
+}
+</script>
+</head>
+<body>
+
+<header>
+<h1 id="myTitle">Forms</h1>
+</header>
+
+<section>
+<p><a id="myLink" href="/">&lt;back</a></p>
+<p id="myText">Some form elements!</p>
+
+<form id="myForm">
+<p><input type="text" id="myInput" value="input" /></p>
+
+<p><textarea rows="3" cols="30" id="myTextarea">textarea</textarea></p>
+
+<p>
+<select id="myDropdown">
+<option value="H">Hydrogen</option>
+<option value="He">Helium</option>
+<option value="Li">Lithium</option>
+<option value="Be">Beryllium</option>
+<option value="B">Boron</option>
+<option value="C">Carbon</option>
+<option value="N">Nitrogen</option>
+<option value="O">Oxygen</option>
+<option value="F">Fluorine</option>
+<option value="Ne">Neon</option>
+</select>
+</p>
+
+<p>
+<input type="radio" name="myRadio" id="myRadioA" value="A" checked="checked" /><label for="myRadioA">A</label>
+<input type="radio" name="myRadio" id="myRadioB" value="B" /><label for="myRadioB">B</label>
+<input type="radio" name="myRadio" id="myRadioC" value="C" /><label for="myRadioC">C</label>
+</p>
+
+<p>
+<input type="checkbox" id="myCheckD" value="D" checked="checked" /><label for="myCheckD">D</label>
+<input type="checkbox" id="myCheckE" value="E" /><label for="myCheckE">E</label>
+<input type="checkbox" id="myCheckF" value="F" /><label for="myCheckF">F</label>
+</p>
+
+<p><input type="button" name="myButton" value="GO!" onClick="makeOutput();"/></p>
+</form>
+
+<p id="output" class="output">output</p>
+</section>
+
+<footer>
+<p id="myFooter">&copy; 2012-2013 gorillalogic.com</p>
+</footer>
+
+</body>
+</html>

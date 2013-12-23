@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <title>MTObjConnect</title>
+        <meta name="viewport" content="width=320" />
+        <meta name="viewport" content="user-scalable=0" />
+        <meta name="viewport" content="initial-scale=1.0" />
+        <meta name="viewport" content="minimum-scale=1.0" />
+        <meta name="viewport" content="maximum-scale=1.0" />
+        <script type="text/javascript">
+            var jsfile = getUrlVars()["jsfile"];
+            var connectfile = getUrlVars()["connectfile"];
+            var apifile = getUrlVars()["apifile"];
+            var dirpath = getUrlVars()["dirpath"];
+            
+            document.write('<script type=text/javascript src=' + dirpath + '/jquery-latest.jslib' + '>' + '\<\/script\>');
+            document.write('<script type=text/javascript src=' + dirpath + '/qunit.jslib' + '>' + '\<\/script\>');
+            
+            document.write('<script type=text/javascript src=' + connectfile + '>' + '\<\/script\>');
+            document.write('<script type=text/javascript src=' + jsfile + '>' + '\<\/script\>');
+            document.write('<script type=text/javascript src=' + apifile + '>' + '\<\/script\>');
+            document.write('<link rel=stylesheet href=' + dirpath + '/qunit.css type=text/css media=screen />');
+            
+            function getUrlVars() {
+                var vars = {};
+                var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+                                                         vars[key] = value;
+                                                         });
+                return vars;
+            }
+            </script>
+    </head>
+    <body>
+        <h1 id="qunit-header">MonkeyTalk Results</h1>
+        <h2 id="qunit-banner"></h2>
+        <div id="qunit-testrunner-toolbar"></div>
+        <ol id="qunit-tests"></ol>
+        <div id="qunit-fixture"></div>
+    </body>
+</html>

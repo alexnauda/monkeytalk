@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="com.gorillalogic.monkeytalk.ide.feature"
+      label="MonkeyTalk IDE feature"
+      version="1.0.63.qualifier"
+      provider-name="Gorilla Logic, Inc.">
+
+   <description url="http://www.gorillalogic.com/testing-tools/monkeytalk">
+      MonkeyTalk is a functional testing tool for apps targeted at
+the iOS and Android operating system. MonkeyTalk can record and
+play back user interactions, verify screen contents and application
+state, and can be used interactively or run as part of a headless,
+fully-automated Continuous Integration process.
+.
+MonkeyTalk scripts can be recorded and/or written from scratch,
+using the keyword-driven MonkeyTalk scripting language or Javascript.
+The MonkeyTalk language supports conditional execution of platform-specific
+steps, iterative data-driven testing from row/column data such
+as a CSV file, and calling a script from a script. Tests can
+be written in or converted to Javascript for advanced scripting
+or integration.
+   </description>
+
+   <copyright url="http://www.gorillalogic.com">
+      Copyright 2012 Gorilla Logic, Inc.
+   </copyright>
+
+   <license url="http://www.gorillalogic.com">
+     MonkeyTalk is licensed under the GNU Affero General Public License v3 open source license.
+   </license>
+
+   <url>
+      <update url="http://www.gorillalogic.com/testing-tools/monkeytalk/updatesite"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.ui" version="3.6.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.ui.console" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jdt.junit" version="3.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.navigator.resources" version="3.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.navigator" version="3.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.browser" version="3.0.0" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="com.gorillalogic.monkeytalk.ide"
+         download-size="0"
+         install-size="0"
+         version="1.0.63.qualifier"/>
+
+</feature>

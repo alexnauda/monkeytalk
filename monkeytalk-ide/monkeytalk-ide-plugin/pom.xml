@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>com.gorillalogic.monkeytalk.ide</artifactId>
+	<packaging>eclipse-plugin</packaging>
+
+	<parent>
+		<groupId>com.gorillalogic.monkeytalk.ide</groupId>
+		<artifactId>monkeytalk-ide</artifactId>
+		<version>1.0.63-SNAPSHOT</version>
+	</parent>
+
+	<build>
+		<outputDirectory>bin</outputDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>update-about-text</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<property environment="env" />
+								<property name="target" value="${basedir}/plugin.xml" />
+
+								<condition property="ver"
+									value="${project.version} (build ${env.BUILD_NUMBER})" else="${project.version} (dev)">
+									<isset property="env.BUILD_NUMBER" />
+								</condition>
+								<property name="about"
+									value="MonkeyTalk IDE v${ver} | Copyright 2012-2013 Gorilla Logic, Inc. | http://www.gorillalogic.com/monkeytalk" />
+
+								<echo message="set monkeytalk-ide-plugin version to v${ver}..." />
+								<replaceregexp file="${basedir}/plugin.xml"
+									byline="true">
+									<regexp
+										pattern="&lt;property name=&quot;aboutText&quot; value=&quot;.*&quot;&gt;" />
+									<substitution
+										expression="&lt;property name=&quot;aboutText&quot; value=&quot;${about}&quot;&gt;" />
+								</replaceregexp>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>svn-commit</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target if="svnuser">
+								<echo message="svn commit..." />
+								<exec executable="svn">
+									<arg
+										line="commit --username ${svnuser} --password ${svnpass} -m 'NO_CI ide plugin.xml' ." />
+								</exec>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<outputDirectory>${basedir}/libs</outputDirectory>
+					<overWriteReleases>true</overWriteReleases>
+					<overWriteSnapshots>true</overWriteSnapshots>
+					<overWriteIfNewer>true</overWriteIfNewer>
+					<stripVersion>true</stripVersion>
+				</configuration>
+				<executions>
+					<execution>
+						<id>copy-deps-to-libs-folder</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.gorillalogic.monkeytalk</groupId>
+			<artifactId>monkeytalk-processor</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.gorillalogic.monkeytalk</groupId>
+			<artifactId>monkeytalk-js</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.gorillalogic.monkeytalk</groupId>
+			<artifactId>monkeytalk-agent-html</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<version>4.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.gorillalogic.monkeytalk.ide.swing2swt</groupId>
+			<artifactId>swing2swt</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+    			<groupId>com.google.code.findbugs</groupId>
+    			<artifactId>jsr305</artifactId>
+    			<version>1.3.9</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+	</dependencies>
+</project>

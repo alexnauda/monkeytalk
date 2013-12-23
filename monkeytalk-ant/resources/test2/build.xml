@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="monkeytalk-ant-test" xmlns:monkeytalk="antlib:com.gorillalogic.monkeytalk.ant">
+
+	<property name="adb" value="adb" />
+	<property name="host" value="localhost" />
+	<property name="port" value="16861" />
+
+	<echo message="basedir=${basedir}" />
+	<path id="monkeytalk.classpath">
+		<fileset dir="${basedir}/../../bin" casesensitive="yes">
+			<include name="*.jar" />
+			<exclude name="*-sources.jar" />
+			<exclude name="*-javadoc.jar" />
+			<exclude name="original-*.jar" />
+		</fileset>
+	</path>
+
+	<taskdef resource="com/gorillalogic/monkeytalk/ant/antlib.xml"
+		uri="antlib:com.gorillalogic.monkeytalk.ant"
+		classpathref="monkeytalk.classpath" />
+
+	<target name="testLogin">
+		<monkeytalk:run agent="iOS" script="login.mt" host="${host}" port="${port}" />
+	</target>
+	
+	<target name="testLoginJS">
+		<monkeytalk:run agent="iOS" script="login.js" host="${host}" port="${port}" />
+	</target>
+	
+	<target name="testMyScript">
+		<monkeytalk:run agent="iOS" script="myscript.mt" host="${host}" port="${port}" />
+	</target>
+	
+	<target name="testMyScriptMT">
+		<monkeytalk:run agent="iOS" script="myscriptmt.mt" host="${host}" port="${port}" />
+	</target>
+	
+	<target name="testMyScriptJS">
+		<monkeytalk:run agent="iOS" script="myscriptjs.mt" host="${host}" port="${port}" />
+	</target>
+</project>

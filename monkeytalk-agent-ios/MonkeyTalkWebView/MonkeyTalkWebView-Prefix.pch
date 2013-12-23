@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'MonkeyTalkWebView' target in the 'MonkeyTalkWebView' project
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#endif

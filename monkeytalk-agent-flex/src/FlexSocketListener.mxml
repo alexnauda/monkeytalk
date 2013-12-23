@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/halo"
+					   xmlns:monkeylink="com.gorillalogic.monkeylink.*"
+					   width="230" height="85" applicationComplete="init()"
+					   title="Monkey Talk Flex Agent">
+	<fx:Declarations>
+		
+	</fx:Declarations>
+	<s:layout>
+		<s:VerticalLayout paddingBottom="8" paddingLeft="8" paddingRight="8" paddingTop="8"/>
+	</s:layout>
+	<s:Group keyDown="debug_CatchKeysEnterDebugAction(event)">
+		<s:layout>
+			<s:HorizontalLayout>
+				
+			</s:HorizontalLayout>
+		</s:layout>
+		<s:Image id="gorillaImage" source="assets/gorilla-48.png"/>
+		<s:Group>
+			<s:layout>
+				<s:VerticalLayout>
+					
+				</s:VerticalLayout>
+			</s:layout>
+			<s:TextArea width="155" height="50" borderVisible="false" editable="false"
+						text="This is a bridge between Monkeytalk and the Flex Application under test."/>
+			<s:Label id="con" text="DISCONNECTED"/>
+		</s:Group>
+
+		<s:Group visible="{debugversion}">
+			<s:layout>
+				<s:VerticalLayout>
+					
+				</s:VerticalLayout>
+			</s:layout>
+			<s:Button label="Connection Test" click="debug_SendRequestToGoogleAction(event)"
+					  toolTip="Sends a message to google to check if we get a 2300"/>
+			<s:Button label="Send Test Record" click="debug_sendTestRecordAction(event)"
+					  toolTip="Sends a test record to the ide"/>
+			<s:Button label="Clear" click="debug_ClearLogAction(event)" toolTip="clear log"/>
+			<s:Button label="Dump Tree" click="debug_sendDumpTreeAction(event)" toolTip="Dump comp tree"/>
+			<s:Button label="Ping" click="ping()"/>
+			<s:Button label="Send Test Play" click="debug_SendTestPlayAction(event)"
+					  toolTip="Sends a play command to the app under test"/>
+			<s:TextInput id="monkeyID" prompt="monkeyID"/>
+			<s:TextInput id="action" prompt="action"/>
+			<s:TextInput id="argsField" prompt="args"/>
+		</s:Group>
+		<s:TextArea id="messagesfield" visible="{debugversion}" text="{messages}"/>
+	</s:Group>
+	
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import com.adobe.serialization.json.JSON;
+			
+			import flash.events.Event;
+			import flash.events.ProgressEvent;
+			import flash.events.ServerSocketConnectEvent;
+			import flash.net.ServerSocket;
+			import flash.net.Socket;
+			import flash.utils.ByteArray;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.AIREvent;
+			import mx.rpc.AsyncToken;
+			import mx.rpc.http.HTTPService;
+			import mx.rpc.soap.WebService;
+			import mx.utils.ObjectUtil;
+			
+			private var serverSocket:ServerSocket;
+			
+			private var localConnectionSender:LocalConnection = new LocalConnection();
+			private var localConnectionReciever:LocalConnection = new LocalConnection();
+			private var recordHost:String = "";
+			private var recordPort:String = "";
+			[Bindable]
+			private var messages:String = "";
+			[Bindable]
+			private var debugversion:Boolean = false;
+			private var isRecordingOn:Boolean = false;
+			private var dump:String = "";
+			private var dumpTemp:String = "";
+			//Responces from the application undertest must be numbered to ensure they are responded correctly
+			private var respNumber:Number = 0;
+			private var response:Array = new Array();
+			private var keyVals:ArrayCollection = new ArrayCollection();
+			private var testIdx:Number = 0;
+			var lc:LoadQueuer = new LoadQueuer();
+			
+			private function init():void
+			{
+				listen();
+				localConnectionReciever = new LocalConnection()
+				localConnectionReciever.client = this; // receiver only
+				localConnectionReciever.allowDomain("*");
+				localConnectionReciever.connect("_monkeyTalkConnectionRecorder");
+				
+				
+				
+				localConnectionSender.addEventListener(StatusEvent.STATUS, statusHandler);
+				
+
+
+				
+				
+				setTimeout(ping, 500);
+				this.addEventListener(Event.CLOSING,windowedapplication1_windowDeactivateHandler,false,0,true);
+				lc.updateMessageLog = updateMessageLog;
+			}
+			function statusHandler (event:StatusEvent):void
+			{
+				switch (event.level)
+				{
+					case "status" :
+						//trace("LocalConnection.send() succeeded");
+						break;
+					case "error" :
+						//trace("LocalConnection.send() failed");
+						break;
+				}
+			}
+			//Start the server
+			private function listen():void
+			{
+				try
+				{
+					serverSocket = new ServerSocket();
+					serverSocket.addEventListener(Event.CONNECT, socketConnectHandler);
+					serverSocket.bind(16865);
+					serverSocket.listen();
+				}
+				catch (error:Error)
+				{
+					Alert.show("Port 16865 may be in use. Enter another port number and try again.\n(" +
+						error.message +")", "Error");
+				}
+			}
+			
+			//What to do when someone connects
+			private function socketConnectHandler(event:ServerSocketConnectEvent):void
+			{
+				var socket:Socket = event.socket;
+				socket.addEventListener(ProgressEvent.SOCKET_DATA, socketDataHandler);
+			}
+			
+			//What to do when a request comes in
+			private function socketDataHandler(event:ProgressEvent):void
+			{
+				try
+				{
+					var socket:Socket = event.target as Socket;
+					var bytes:ByteArray = new ByteArray();
+					socket.readBytes(bytes);
+					var request:String = "" + bytes;
+					
+					request = request.substring(request.indexOf("-Length"));
+					request = request.substring(request.indexOf("\n"));
+					
+					
+					var mt:Object = com.adobe.serialization.json.JSON.decode(request);
+					//{"timestamp":1334351660795,"mtcommand":"PING","record":"OFF","mtversion":1}
+					if(mt.mtcommand == "PING"){
+						//localConnection.localConnectionSender.send("_monkeyTalkConnection","_mikeSConnection", "doSomething");
+						if(mt.record == "ON"){
+							isRecordingOn = true;
+							recordHost = mt.recordhost;
+							recordPort = mt.recordport;
+						} else {
+							isRecordingOn = false;
+						}
+						socket.writeUTFBytes("HTTP/1.1 200 OK\n");
+						socket.writeUTFBytes("Content-Type: application/json\n\n");
+						socket.writeUTFBytes("{\"message\": {\"os\":\"Flex\",\"record\":\"OFF" + "\"}, \"result\":\"OK\"}");
+						socket.flush();
+						socket.close();
+					} else if(mt.mtcommand == "PLAY") {
+						if(mt.modifiers && mt.modifiers.thinktime)
+							setTimeout(playCommand, mt.modifiers.thinktime, mt, socket);
+						else
+							playCommand(mt, socket);
+						
+					} else if(mt.mtcommand == "DUMPTREE"){
+						localConnectionSender.send("_monkeyTalkConnection","dumpcomponentTree");
+						setTimeout(returnDump, 500, socket);
+						
+					}
+					
+					
+				}
+				catch (error:Error)
+				{
+					updateMessageLog("FlexSocketListener Line 166: " + error.toString());
+					updateMessageLog("could not process: \n" + request);
+				}
+			}
+			
+			//Play a given command, this takes a socket as well so we can send the data back to the socket when we are done
+			public function playCommand(mt:Object, socket:Socket):void{
+				//{"timestamp":1334357641920,"mtcommand":"PLAY","monkeyId":"username","mtversion":1,"args":["mike\t"],"action":"EnterText","modifiers":{},"componentType":"Input"}
+				respNumber = respNumber + 1;
+				if((mt.monkeyId as String).charAt(0) == '*' ){
+					mt.monkeyId = mt.componentType + ".1";
+				}
+				if((mt.monkeyId as String).charAt(0) == '#' ){
+					mt.monkeyId = mt.componentType + "." + (mt.monkeyId as String).substring(1);
+				}
+				
+				if(mt.action == "Verify"){
+					localConnectionSender.send("_monkeyTalkConnection","verifyFromMonkeyTalk", respNumber,  mt.monkeyId,  mt.args[0], mt.args[1]);	
+				}else if(mt.action == "VerifyGrid"){
+					localConnectionSender.send("_monkeyTalkConnection","verifyGridFromMonkeyTalk", respNumber,  mt.monkeyId,  mt.args[0], mt.args[1], mt.args[2]);	
+				}else if(mt.action == "Get"){
+					localConnectionSender.send("_monkeyTalkConnection","findFromMonkeyTalk", respNumber,  mt.monkeyId,  mt.args[1]);	
+				} else if(mt.action == "VerifyRegEx"){
+					localConnectionSender.send("_monkeyTalkConnection","verifyRegExFromMonkeyTalk", respNumber,  mt.monkeyId,  mt.args[0], mt.args[1]);	
+				} else if(mt.action == "VerifyNotRegEx"){
+					localConnectionSender.send("_monkeyTalkConnection","verifyNotRegExFromMonkeyTalk", respNumber,  mt.monkeyId,  mt.args[0], mt.args[1]);	
+				} else if(mt.action == "VerifyNotWildcard"){
+					localConnectionSender.send("_monkeyTalkConnection","verifyNotWildcardFromMonkeyTalk", respNumber,  mt.monkeyId,  mt.args[0], mt.args[1]);	
+				} else if(mt.action == "VerifyWildcard"){
+					localConnectionSender.send("_monkeyTalkConnection","verifyWildcardFromMonkeyTalk", respNumber,  mt.monkeyId,  mt.args[0], mt.args[1]);	
+				} else{
+					localConnectionSender.send("_monkeyTalkConnection","playCommand", mt.action, mt.monkeyId, respNumber, mt.args);
+				}
+				setTimeout(returnData, 500, socket, respNumber);
+				
+				
+			}
+			
+			//This function recieves a resonce from the application under test
+			
+			public function recieveResponce(resp:String, number:String):void {
+				updateMessageLog( "Got responce from app under test  " + resp + " " + number);
+				if(!resp) resp = "";
+				response["" + number] = resp;
+			}
+			
+			public function ping(){
+				if(pingcount > 2){
+					con.text = "DISCONNECTED";
+				} else {
+					con.text = "CONNECTED";
+				}
+				setTimeout(ping, 1000);
+
+				pingcount++;
+				try{
+				localConnectionSender.send("_monkeyTalkConnection","ping", pingcount);
+				} catch(e:Error){
+					
+				}
+
+			}
+			var pingcount:int = 0;
+			public function answerping(resp:String, number:String):void {
+				pingcount = 0;
+				trace(number + " " + resp);
+			}
+			
+			//This function is reponsible for actually returning the response to the client
+			//it must be implemented this way to wait for response from the client before rsponding
+			public function returnData(socket:Socket, number:Number):void {
+				try {
+					
+					if(null == response["" + number]){setTimeout(returnData, 500, socket, respNumber); return;}
+					updateMessageLog("Returning data to ide:" + number + " " + response["" + number]);
+					socket.writeUTFBytes("HTTP/1.1 200 OK\n");
+					socket.writeUTFBytes("Content-Type: application/json\n\n");
+					
+					if("" == response["" + number])
+						socket.writeUTFBytes("{\"message\": \"SUCCESS\", \"result\":\"OK\"}");
+					else if((response["" + number] as String).indexOf("Expected") >= 0)
+						socket.writeUTFBytes("{\"message\": \""+response["" + number]+"\", \"result\":\"FAILURE\"}");
+					else if((response["" + number] as String).indexOf("Value:") >= 0){
+						socket.writeUTFBytes("{\"message\": \""+(response["" + number] as String).substr(6)+"\", \"result\":\"OK\"}");
+					}
+					else {
+						socket.writeUTFBytes("{\"message\": \""+response["" + number]+"\", \"result\":\"ERROR\"}");
+					}
+					socket.flush();
+					socket.close();
+				}
+				catch (error:Error)
+				{
+					updateMessageLog("FlexSocketListener Line 236: " + error.toString());
+				}
+			}
+			
+			//Send the completed dump back to the IDE
+			public function returnDump(socket:Socket):void{
+				if(dump.length == 0){
+					setTimeout(returnDump, 500, socket);
+					return;
+				} else {
+					socket.writeUTFBytes("HTTP/1.1 200 OK\n");
+					socket.writeUTFBytes("Content-Type: application/json\n\n");
+					socket.writeUTFBytes(dump);
+					socket.flush();
+					socket.close();
+				}
+			}
+			
+			//After the dump has been full recieve we must convert the names to monkeytalk compatable names
+			public function finishDump():void{
+				var myPattern:RegExp = /\"name\":/g; 
+				dumpTemp = dumpTemp.replace(myPattern, "\"ComponentType\":");
+				var myPattern2:RegExp = /\"automationName\":/g; 
+				dumpTemp = dumpTemp.replace(myPattern2, "\"monkeyId\":");
+				var myPattern3:RegExp = /\"automationOwner\":/g; 
+				dumpTemp = dumpTemp.replace(myPattern3, "\"className\":");
+				
+				dump = "{\"message\":" + dumpTemp + ", \"result\":\"OK\"}";
+				updateMessageLog(dump);
+			}
+			
+			//We have to get the dump in sections because the data is too large for one local connection request
+			public function recieveDump(dump2:String, start:Boolean, end:Boolean, packetnumber:int):void {
+				if(start)
+					this.dumpTemp = dump2;
+				else
+					this.dumpTemp += dump2;
+				if(end){
+					finishDump();
+				}
+				
+				
+			}
+			public function updateMessageLog(message:String):void{
+				messages += "\n" + message;	
+			}
+			//Record a command 
+			//This is typically called using the RPC from the applicaiton under test
+			
+			public function record(componentType:String, monkeyId:String, action:String, args:Array):void{
+				updateMessageLog("Recording: " + action);
+				if(!isRecordingOn) return;
+				var argsString:String = "[";
+				for each (var arg:String in args){
+					argsString += "\""+arg+"\"";
+				}
+				argsString += "]";
+				var payload:String = "{\"componentType\":\"" + componentType + "\",\"monkeyId\":\"" + monkeyId + "\",\"action\":\"" + action + "\",\"args\":" + argsString + ", \"mtcommand\":\"RECORD\"}";
+				
+				var requesta:URLRequest = new URLRequest("http://" + recordHost + ":" + recordPort + "/" + new Date().getTime());
+				requesta.method = "POST";
+				requesta.contentType = "application/json";
+				requesta.useCache = false;
+				requesta.data = payload;
+				
+				lc.queue(new URLLoader(), requesta);
+				
+				
+			}
+			
+			
+			
+			
+			//Close the socket when the window is closed
+			protected function windowedapplication1_windowDeactivateHandler(event:Event):void
+			{
+				serverSocket.close();
+			}
+			
+			
+			
+			
+			protected function debug_SendTestPlayAction(event:MouseEvent):void
+			{
+				
+				localConnectionSender.send("_monkeyTalkConnection","playCommand", this.action.text, this.monkeyID.text, "2000" + (++testIdx), this.argsField.text.split(","));
+				
+			}
+			
+			
+			protected function debug_SendRequestToGoogleAction(event:MouseEvent):void
+			{
+				var request:URLRequest = new URLRequest("http://www.google.com");
+				request.method = "GET";
+				request.contentType = "text/html";
+				var loader : URLLoader = new URLLoader(request);
+				loader.addEventListener(HTTPStatusEvent.HTTP_RESPONSE_STATUS, function(e:Event):void{
+					updateMessageLog("Response Status" + e["status"]);
+				});
+				
+			}
+			protected function debug_sendTestRecordAction(event:MouseEvent):void
+			{
+				this.record("Button","*","tap",new Array());
+				
+				
+			}
+			protected function debug_sendDumpTreeAction(event:MouseEvent):void
+			{
+				localConnectionSender.send("_monkeyTalkConnection","_monkeyTalkConnection","dumpcomponentTree");
+				
+			}
+			
+			protected function debug_CatchKeysEnterDebugAction(event:KeyboardEvent):void
+			{
+				//Enter debug mode if the correct phrase is entered "mikerocks"
+				keyVals.addItem(Number(event.charCode));
+				if(keyVals.length == 10) keyVals.removeItemAt(0);
+				if(keyVals.length == 9){
+					var val:Number = 0;
+					for(var i:Number = 0; i < keyVals.length; i++){
+						var code:Number = keyVals.getItemAt(i) as Number;
+						val= val + code;
+					}
+					if(val == 968){
+						this.debugversion = true;
+						this.width = 540;
+						this.height = this.height + 100;
+					}
+				}
+			}
+			
+			protected function debug_ClearLogAction(event:MouseEvent):void
+			{
+				messages = "";
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+</s:WindowedApplication>

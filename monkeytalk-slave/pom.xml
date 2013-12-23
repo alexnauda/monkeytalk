@@ -1,0 +1,97 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.gorillalogic.monkeytalk</groupId>
+	<artifactId>monkeytalk-slave</artifactId>
+	<version>1.0.63-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>get-metadata</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<echo message="get monkeytalk metadata from:" />
+								<property name="repo" value="http://simiiformes.gorillalogic.com:8080/artifactory/repo" />
+								<property name="meta" value="${repo}/com/gorillalogic/monkeytalk/monkeytalk/maven-metadata.xml" />
+								<property name="meta.out" value="${project.build.directory}/meta1.xml" />
+
+								<echo message="  ${meta}" />
+								<echo message="${line.separator}getting..." />
+								<get src="${meta}" dest="${meta.out}" />
+								<xmlproperty file="${meta.out}" prefix="meta1" />
+								<echoproperties prefix="meta1" />
+		
+								<echo message="lastest is v${meta1.metadata.versioning.latest}..." />
+
+								<echo message="${line.separator}local repo at:" />
+								<echo message="  ${settings.localRepository}/com/gorillalogic" />
+								
+								<echo message="${line.separator}flushing..." />
+								<delete dir="${settings.localRepository}/com/gorillalogic" />
+								
+								<echo message="${line.separator}done" />
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.5.1</version>
+				<executions>
+					<execution>
+						<id>download-artifacts</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<!-- parent pom -->
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk</groupId>
+									<artifactId>monkeytalk</artifactId>
+									<version>${project.version}</version>
+									<type>pom</type>
+								</artifactItem>
+								
+								<!-- runners -->
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk</groupId>
+									<artifactId>monkeytalk-ant</artifactId>
+									<version>${project.version}</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk</groupId>
+									<artifactId>monkeytalk-runner</artifactId>
+									<version>${project.version}</version>
+								</artifactItem>
+								
+								<!-- agents -->
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk</groupId>
+									<artifactId>monkeytalk-agent</artifactId>
+									<version>${project.version}</version>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies />
+</project>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="monkeytalk-ant-test" xmlns:monkeytalk="antlib:com.gorillalogic.monkeytalk.ant">
+
+	<property name="adb" value="adb" />
+	<property name="host" value="localhost" />
+	<property name="port" value="16861" />
+
+	<echo message="basedir=${basedir}" />
+	<path id="monkeytalk.classpath">
+		<fileset dir="${basedir}/../../bin" casesensitive="yes">
+			<include name="*.jar" />
+			<exclude name="*-sources.jar" />
+			<exclude name="*-javadoc.jar" />
+			<exclude name="original-*.jar" />
+		</fileset>
+	</path>
+
+	<taskdef resource="com/gorillalogic/monkeytalk/ant/antlib.xml"
+		uri="antlib:com.gorillalogic.monkeytalk.ant"
+		classpathref="monkeytalk.classpath" />
+
+	<target name="testSimple">
+		<echo message="server=${host}:${port}" />
+		<monkeytalk:run agent="iOS" script="simple.mt" host="${host}" port="${port}" />
+	</target>
+	
+	<target name="testScript">
+		<echo message="server=${host}:${port}" />
+		<monkeytalk:run agent="iOS" script="myscript.mt" host="${host}" port="${port}" />
+	</target>
+	
+	<target name="testDebugPrint">
+		<echo message="server=${host}:${port}" />
+		<monkeytalk:run agent="iOS" script="debug.mt" host="${host}" port="${port}" />
+	</target>
+	
+	<target name="testVerbose">
+		<echo message="server=${host}:${port}" />
+		<monkeytalk:run agent="iOS" script="simple.mt" host="${host}" port="${port}" verbose="true" />
+	</target>
+	
+	<target name="testSuite">
+		<echo message="server=${host}:${port}" />
+		<monkeytalk:run agent="iOS" suite="mysuite.mts" host="${host}" port="${port}" />
+	</target>
+	
+	<target name="testSuiteVerbose">
+		<echo message="server=${host}:${port}" />
+		<monkeytalk:run agent="iOS" suite="mysuite.mts" host="${host}" port="${port}" verbose="true" />
+	</target>
+	
+	<target name="testFirefox">
+		<echo message="server=${host}:${port}" />
+		<monkeytalk:run agent="Firefox" script="simple.mt" host="${host}" port="${port}" />
+	</target>	
+
+	<target name="testCommandText">
+		<echo message="server=${host}:${port}" />
+		<monkeytalk:run agent="iOS" host="${host}" port="${port}">
+			Button SIMPCMDTEXT Tap
+		</monkeytalk:run>
+	</target>
+	
+	<target name="testGlobals">
+		<echo message="server=${host}:${port}" />
+		<monkeytalk:run agent="iOS" script="glob.mt" host="${host}" port="${port}"
+		    globals="foo=123 bar=&quot;Bo Bo&quot;" />
+	</target>
+	
+	<target name="testGlobalsSingleQuote">
+		<echo message="server=${host}:${port}" />
+		<monkeytalk:run agent="iOS" script="glob.mt" host="${host}" port="${port}"
+		    globals="foo='123 456' bar=isn't" />
+	</target>
+	
+	<target name="testGlobalsBadArg">
+		<echo message="server=${host}:${port}" />
+		<monkeytalk:run agent="iOS" script="glob.mt" host="${host}" port="${port}"
+		    globals="foo=123 bar" />
+	</target>
+	
+	<target name="testGlobalsIllegalName">
+		<echo message="server=${host}:${port}" />
+		<monkeytalk:run agent="iOS" script="glob.mt" host="${host}" port="${port}"
+		    globals="1foo=123" />
+	</target>
+</project>

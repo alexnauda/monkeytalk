@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'MonkeyTalkMediaPlayer' target in the 'MonkeyTalkMediaPlayer' project
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#endif

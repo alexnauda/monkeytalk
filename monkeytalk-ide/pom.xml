@@ -1,0 +1,95 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.gorillalogic.monkeytalk.ide</groupId>
+	<artifactId>monkeytalk-ide</artifactId>
+	<packaging>pom</packaging>
+
+	<name>monkeytalk-ide</name>
+
+	<parent>
+		<groupId>com.gorillalogic.monkeytalk</groupId>
+		<artifactId>monkeytalk</artifactId>
+		<version>1.0.63-SNAPSHOT</version>
+	</parent>
+	
+	<modules>
+		<module>monkeytalk-ide-plugin</module>
+		<module>monkeytalk-ide-feature</module>
+		<module>monkeytalk-ide-updatesite</module>
+		<module>monkeytalk-ide-product</module>
+	</modules>
+
+	<properties>
+		<tycho.version>0.19.0</tycho.version>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>eclipse-kepler</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/kepler</url>
+		</repository>
+	</repositories>
+
+	<profiles>
+		<profile>
+			<id>sign</id>
+			<!-- To sign plug-ins and features, run: mvn -Psign -Dkeystore=<path> 
+				-Dstorepass=*** -Dalias=<keyalias> clean install -->
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-jar-plugin</artifactId>
+							<version>2.3.1</version>
+							<executions>
+								<execution>
+									<goals>
+										<goal>sign</goal>
+									</goals>
+								</execution>
+							</executions>
+							<configuration>
+								<verify>true</verify>
+								<jarPath>${project.build.directory}/${project.build.finalName}.jar</jarPath>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
+		</profile>
+	</profiles>
+
+	<build>
+		<directory>target</directory>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<resolver>p2</resolver>
+					<pomDependencies>consider</pomDependencies>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-compiler-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

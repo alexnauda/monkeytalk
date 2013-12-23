@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/com.gorillalogic.monkeytalk.ide.feature_1.0.63.qualifier.jar" id="com.gorillalogic.monkeytalk.ide.feature" version="1.0.63.qualifier">
+      <category name="Gorilla Logic"/>
+   </feature>
+   <category-def name="Gorilla Logic" label="Gorilla Logic">
+      <description>
+         Plugins provided by Gorilla Logic.
+      </description>
+   </category-def>
+</site>

@@ -1,0 +1,35 @@
+#These are the built-in automators. 
+#do NOT delete extra blank lines at end of this file 
+com.gorillalogic.fonemonkey.automators.ButtonAutomator
+com.gorillalogic.fonemonkey.automators.DatePickerAutomator
+com.gorillalogic.fonemonkey.automators.SpinnerAutomator
+com.gorillalogic.fonemonkey.automators.ListViewAutomator
+com.gorillalogic.fonemonkey.automators.TextViewAutomator
+com.gorillalogic.fonemonkey.automators.ToggleButtonAutomator
+com.gorillalogic.fonemonkey.automators.CheckBoxAutomator
+com.gorillalogic.fonemonkey.automators.SeekBarAutomator
+com.gorillalogic.fonemonkey.automators.RatingBarAutomator
+com.gorillalogic.fonemonkey.automators.DeviceAutomator
+com.gorillalogic.fonemonkey.automators.MenuAutomator
+com.gorillalogic.fonemonkey.automators.DialogAutomator
+com.gorillalogic.fonemonkey.automators.TabAutomator
+com.gorillalogic.fonemonkey.automators.EditTextAutomator
+#com.gorillalogic.fonemonkey.automators.GestureAutomator
+com.gorillalogic.fonemonkey.automators.RadioButtonsAutomator
+com.gorillalogic.fonemonkey.automators.WebViewAutomator
+com.gorillalogic.fonemonkey.automators.HtmlElementAutomator
+com.gorillalogic.fonemonkey.automators.HtmlSelectAutomator
+com.gorillalogic.fonemonkey.automators.HtmlTableAutomator
+com.gorillalogic.fonemonkey.automators.HtmlRadioButtonAutomator
+com.gorillalogic.fonemonkey.automators.HtmlCheckBoxAutomator
+com.gorillalogic.fonemonkey.automators.HtmlInputAutomator
+com.gorillalogic.fonemonkey.automators.HtmlTextAreaAutomator
+com.gorillalogic.fonemonkey.automators.HtmlButtonAutomator
+com.gorillalogic.fonemonkey.automators.HtmlButtonSelectorAutomator
+com.gorillalogic.fonemonkey.automators.ViewGroupAutomator
+com.gorillalogic.fonemonkey.automators.HtmlLinkAutomator
+com.gorillalogic.fonemonkey.automators.AppAutomator
+com.gorillalogic.fonemonkey.automators.ImageViewAutomator
+com.gorillalogic.fonemonkey.automators.ScrollerAutomator
+com.gorillalogic.fonemonkey.automators.GridViewAutomator
+#do NOT delete extra blank lines at end of this file

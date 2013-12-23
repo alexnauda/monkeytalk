@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>${name}</title>
+<meta charset="UTF-8" />
+<style type="text/css">
+	body { font-family: Cambria, Georgia, serif; font-size:14pt; margin:0; padding:20px; background-color:#eee; }
+	a { color:#111; text-decoration:none; }
+	a:hover { color:#666; }
+	.report { list-style:none; padding:0; }
+	.report li { border:2px solid #888; background-color:#ddd; padding:10px; margin:0 0 10px 0; }
+	li.suite { border:none; background-color:#333; }
+	li.suite ul { list-style:none; display:inline; padding: 0; }
+	li.suite ul li, suite-tests { border:none; display:inline; padding:0 25px 0 0; background-color:#333; color:#eee; }
+	#suite-name { font-size:200%; font-weight:bold; }
+	li.test ul { list-style:none; border:2px solid #aaa; background-color:#eee; padding:0 6px 6px 6px; margin:8px 0 0 0; }
+	li.test ul li { border:none; background-color:#eee; padding:6px 0 0 0; margin:0; }
+	pre { border:1px solid #000; background-color:#fff; padding:6px; margin:0; }
+	.result { float:right; font-weight:bold; }
+	.err { color:#c33; }
+	.ok { color:#3a3; }
+	.details { display:none; }
+	li.test a { padding:0 22px; }
+	.closed { background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADwSURBVDiNnZLNacNAEIXfExvQJec04Htgd3SJCnANPhg34VNaSNJEUkRQA8YHrcB3NeAOBBH7ckoQRol+HsxhZ3Y+voWFJPyU9/69LMv7YW+qMgxCct91XeO9N8xMNtLbZFl2MrMjSU4BKOn3YGa6mVfOucP5fL4uMRhm2/f9JYSwXQsAgAeSn2b2YmZ3awAAQABHkqcQwmYNAAAgyUg2RVHsVwHG4pZcJlmnlHZ1XbdLDQTgVdJTjLEdDuYYXCUdYozV2HDKoHLOPf61/J/BF4DnGOObhl91JqBNKe2apqkn7ADcPEHSR57nfu4yAHwDxw18G8gdKEMAAAAASUVORK5CYII=) no-repeat center left; }
+	.opened { background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADmSURBVDiNrZPRbcIwGITvLPfBezCB3bx0gYohUAZgg+zAEmWIigWQpcSegAUyA1KOF4MaNaGU8D/Zsr/7Ld/9lIQlZRbRrxCg9/6L5OYZWNLeOOe2AE5P8Cfn3JaS4L1/N8YcAbw9CJ+HYfjIOXcGAHLOHYDmH92bwoBXG0kyhPAN4PMP+JBSWquANxckyVpbA+jvwL21ttaP8IxsjDH2kmoAU+mSpDrGOGrwKwcppQOA3YTArpyNai5IDcnuuinryU/m3CyEEFYkc3m7TylNZmVWAACqqtoAQNu2+7k7dwUeqcXDdAGML2Mo9iPVKwAAAABJRU5ErkJggg==) no-repeat center left; }
+	footer { margin:20px 0 0 0; font-size:75%; text-align:center; }
+	footer a { color:#aaa }
+	footer a:hover { color:#888; }
+</style>
+<script type="text/javascript">
+function tog(id) {
+    var elem = document.getElementById('test' + id);
+    elem.style.display = (elem.style.display == 'none' ? 'block' : 'none');
+    elem = document.getElementById('link' + id);
+    elem.className = (elem.className == 'opened' ? 'closed' : 'opened');
+}
+
+function updateTests(){
+	var tests = document.getElementsByClassName("test");
+	var results;
+	var result;
+	var resultValue;
+	for (var i=0; i<tests.length; i++) {
+	    var elem=tests[i];
+	    results = elem.getElementsByTagName("div");
+	    if (results.length > 0){
+	        result = results[0];
+	        resultValue = result.innerHTML;
+	    }
+	    var ulelement = elem.getElementsByTagName("ul")[0];
+	    var lielement = ulelement.getElementsByTagName("li");
+	    for(var j=0; j<lielement.length; j++){
+	        var temp = lielement[j];
+	        if(temp.id == 'message'){
+	            var content = temp.innerHTML;
+	            if(resultValue == 'OK'){
+	                temp.innerHTML = 'message: '+content;
+	            } else{
+	                temp.innerHTML = '<pre>'+content+'</pre>'; 
+	            }
+	        }
+	    }
+	}
+}
+
+function updateSuites(){
+	var suites = document.getElementsByClassName("suite-tests");
+	for (var i=0; i<suites.length; i++){
+	    var element=suites[i];
+	    var numTests=element.getAttribute("data-tests");
+	    var numErrors=element.getAttribute("data-err");
+	    var numFailures=element.getAttribute("data-fail");
+	    var numSkipped=element.getAttribute("data-skip");
+	    
+	    var content = numTests+(numTests == 1 ? " test (" : " tests (")+(numErrors > 0 ? "<span class=\"err\">" : "") +numErrors+(numErrors == 1 ? " error" : " errors")+(numErrors > 0 ? "</span>, " : ", ")+(numFailures > 0 ? "<span class=\"err\">" : "")+numFailures+(numFailures == 1 ? " failure" : " failures")+(numFailures > 0 ? "</span>, " : ", ")+numSkipped+" skipped)";
+	    element.innerHTML=content;
+	}
+}
+
+function updateFragments(){
+	updateTests();
+	updateSuites();
+}
+</script>
+</head><body onload="updateFragments();">
+${content}
+<footer><p><a href="http://www.gorillalogic.com/monkeytalk">MonkeyTalk by Gorilla Logic</a></p></footer>
+</body></html>

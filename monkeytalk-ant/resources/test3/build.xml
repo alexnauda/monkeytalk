@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="monkeytalk-ant-test3" xmlns:monkeytalk="antlib:com.gorillalogic.monkeytalk.ant">
+
+	<property name="adb" value="adb" />
+	<property name="host" value="localhost" />
+	<property name="port" value="16861" />
+
+	<echo message="basedir=${basedir}" />
+	<path id="monkeytalk.classpath">
+		<fileset dir="${basedir}/../../bin" casesensitive="yes">
+			<include name="*.jar" />
+			<exclude name="*-sources.jar" />
+			<exclude name="*-javadoc.jar" />
+			<exclude name="original-*.jar" />
+		</fileset>
+	</path>
+
+	<taskdef resource="com/gorillalogic/monkeytalk/ant/antlib.xml"
+			uri="antlib:com.gorillalogic.monkeytalk.ant"
+			classpathref="monkeytalk.classpath" />
+
+	<fail unless="adb" message="You must specify adb on commandline like this: -Dadb=/path/to/adb" />
+
+	<target name="testSimpleAndroid">
+		<echo message="server=${host}:${port}" />
+		<monkeytalk:run agent="Android" script="simple.mt" host="${host}" port="${port}" verbose="true" />
+	</target>
+
+	<target name="testSimpleAndroidEmulator">
+		<echo message="server=${host}:${port}" />
+		<monkeytalk:run agent="AndroidEmulator" script="simple.mt" host="${host}" port="${port}" adb="${adb}" verbose="true" />
+	</target>
+
+	<target name="testSimpleAndroidSerial">
+		<echo message="server=${host}:${port}" />
+		<monkeytalk:run agent="AndroidEmulator" script="simple.mt" host="${host}" port="${port}" adb="${adb}" adbSerial="myserial" verbose="true" />
+	</target>
+
+	<target name="testSimpleAndroidSerialRemote">
+		<echo message="server=${host}:${port}" />
+		<monkeytalk:run agent="AndroidEmulator" script="simple.mt" host="${host}" port="${port}" adb="${adb}" adbSerial="foohost:4321" verbose="true" />
+	</target>
+
+	<target name="testParallel">
+		<echo message="server=${host}:${port}" />
+		<parallel>
+			<monkeytalk:run agent="AndroidEmulator" host="${host}" port="${port}" adb="${adb}" script="mysuite.mts" adbSerial="myserial1" adbLocalPort="${port}" adbRemotePort="16862" reportdir="reports1" verbose="true" />
+			<monkeytalk:run agent="AndroidEmulator" host="${host}" port="${port}" adb="${adb}" script="mysuite.mts" adbSerial="myserial2" adbLocalPort="${port}" adbRemotePort="16862" reportdir="reports2" verbose="true" />
+		</parallel>
+	</target>
+</project>

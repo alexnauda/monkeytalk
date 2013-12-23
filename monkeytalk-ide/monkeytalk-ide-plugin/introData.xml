@@ -1,0 +1,53 @@
+<introContent>
+	<extensionContent id="monkeytalk.ide1" style="css/sample.css"
+		name="MonkeyTalk IDE" path="overview/@">
+			<group style-id="content-group" id="overview" >
+				<link label="What's New?"
+					url="http://www.gorillalogic.com/testing-tools/monkeytalk/documentation/whats-new"
+					id="whatsnew" style-id="content-link">
+					<text>Find out what's new in this release.
+					</text>
+				</link>			    
+				<link label="MonkeyTalk Quickstart"
+					url="http://www.gorillalogic.com/testing-tools/monkeytalk/documentation/monkeytalk-quick-start"
+					id="quickstart" style-id="content-link">
+					<text>Learn the essentials of MonkeyTalk testing with this quick
+						tutorial.
+					</text>
+				</link>
+				<link label="Introducing CloudMonkey"
+					url="https://www.gorillalogic.com/cloudmonkey"
+					id="cloudmonkey" style-id="content-link">
+					<text>Test your app on every platform by running your MonkeyTalk tests in the cloud.
+					</text>
+				</link>
+				<!--   link label="Download the Agents" url="http://www.gorillalogic.com/monkeytalk"
+					id="agents" style-id="content-link">
+					<text>To use MonkeyTalk, you must first install the MonkeyTalk iOS
+						or Android agent in your app.
+					</text>
+				</link -->
+				<link label="Create Your First Project"
+					url="http://org.eclipse.ui.intro/runAction?pluginId=com.gorillalogic.monkeytalk.ide&amp;class=com.gorillalogic.monkeyconsole.actions.NewProject"
+					id="newproject" style-id="content-link">
+					<text>Click here to create a new testing project.</text>
+				</link>
+			</group>
+			
+			<group  style-id="content-group" id="overview" expandable="true" expanded="false" label="More...">
+				<link label="Read the Docs"
+					url="http://www.gorillalogic.com/testing-tools/monkeytalk/documentation"
+					id="newproject" style-id="content-link">
+					<text>Everything you ever wanted to know about MonkeyTalk is right
+						here.
+					</text>
+				</link>
+				<link label="Get Help"
+					url="http://www.gorillalogic.com/forums/monkeytalk-ios-android"
+					id="help" style-id="content-link">
+					<text>Get your questions answered on the MonkeyTalk Forum</text>
+				</link>
+
+			</group>
+	</extensionContent>
+</introContent>

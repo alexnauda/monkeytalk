@@ -1,0 +1,29 @@
+package ${package};
+
+import java.io.File;
+
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import com.gorillalogic.monkeytalk.java.MonkeyTalkDriver;
+import com.gorillalogic.monkeytalk.java.api.Application;
+${importMods}
+public class ${testClass} {
+	private static MonkeyTalkDriver mt;
+	private Application app;
+
+	@BeforeClass
+	public static void beforeClass() {
+${driver}${timeout}${thinktime}	}
+
+	@Before
+	public void before() {
+		app = mt.app();
+	}
+
+	@Test
+	public void ${test}() {
+		${commands}
+	}
+${extra}}

@@ -1,0 +1,299 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>monkeytalk-java</artifactId>
+
+	<parent>
+		<groupId>com.gorillalogic.monkeytalk</groupId>
+		<artifactId>monkeytalk</artifactId>
+		<version>1.0.63-SNAPSHOT</version>
+	</parent>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>resources/templates</directory>
+				<targetPath>templates</targetPath>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>resources/templates</directory>
+				<targetPath>templates</targetPath>
+			</testResource>
+		</testResources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>com.gorillalogic.monkeytalk.java.tools.JavaMTGenerator</mainClass>
+							<packageName>com.gorillalogic.monkeytalk.java.tools</packageName>
+						</manifest>
+					</archive>
+					<excludes>
+						<exclude>**/tools/JavaAPI*</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.gorillalogic.monkeytalk</groupId>
+						<artifactId>monkeytalk-meta</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<id>codgen-java-api</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<property name="base"
+									value="${basedir}/src/com/gorillalogic/monkeytalk/java" />
+								<property name="tools.build" value="${basedir}/bin/tools" />
+								<property name="tools.src" value="${base}/tools" />
+								<property name="api.output" value="${base}/api" />
+
+								<mkdir dir="${tools.build}" />
+
+								<javac srcdir="${tools.src}" destdir="${tools.build}"
+									includeantruntime="false" source="1.6" target="1.6" fork="yes">
+									<exclude name="**/JavaMTGenerator.java"/>
+									<classpath refid="maven.plugin.classpath" />
+								</javac>
+
+								<path id="classpath">
+									<path refid="maven.plugin.classpath" />
+									<pathelement location="${tools.build}" />
+								</path>
+
+								<java classname="com.gorillalogic.monkeytalk.java.tools.JavaAPIGenerator">
+									<classpath refid="classpath" />
+									<arg value="${api.output}" />
+								</java>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>svn-commit</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target if="svnuser">
+								<echo message="svn commit..." />
+								<exec executable="svn">
+									<arg
+										line="commit --username ${svnuser} --password ${svnpass} -m 'NO_CI monkeytalk-java api codegen' ." />
+								</exec>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>bundle-src-into-all-in-one</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<!-- after packaging, but prior to install - bundle the src jar into 
+									the all-in-one so we get good javadoc -->
+								<property name="src.jar"
+									value="${basedir}/bin/monkeytalk-java-${project.version}-sources.jar" />
+								<property name="all-in-one.jar"
+									value="${basedir}/bin/monkeytalk-java-${project.version}-all-in-one.jar" />
+								<property name="super.jar" value="${basedir}/bin/super.jar" />
+
+								<echo message="bundle all-in-one + src jars together..." />
+								<zip destfile="${super.jar}">
+									<zipfileset src="${all-in-one.jar}" excludes="license/**,META-INF/*.txt" />
+									<zipfileset src="${src.jar}" excludes="META-INF/*" />
+								</zip>
+
+								<move file="${super.jar}" tofile="${all-in-one.jar}" />
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<formats>
+						<format>xml</format>
+					</formats>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<excludes>
+						<exclude>**/tools/*</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<excludePackageNames>*.tools.*</excludePackageNames>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.0</version>
+				<configuration>
+					<createDependencyReducedPom>false</createDependencyReducedPom>
+					<keepDependenciesWithProvidedScope>true</keepDependenciesWithProvidedScope>
+					<minimizeJar>true</minimizeJar>
+					<shadedArtifactAttached>true</shadedArtifactAttached>
+					<shadedClassifierName>all-in-one</shadedClassifierName>
+					<artifactSet>
+						<excludes>
+							<exclude>junit:junit</exclude>
+							<exclude>org.apache.ant:ant</exclude>
+							<exclude>org.apache.ant:ant-launcher</exclude>
+							<exclude>com.thoughtworks.qdox:qdox</exclude>
+						</excludes>
+					</artifactSet>
+					<filters>
+						<filter>
+							<artifact>com.gorillalogic.monkeytalk:monkeytalk-core</artifact>
+							<includes>
+								<include>com/gorillalogic/monkeytalk/**</include>
+							</includes>
+							<excludes>
+								<exclude>connectors/**</exclude>
+							</excludes>
+						</filter>
+						<filter>
+							<artifact>com.gorillalogic.monkeytalk:monkeytalk-processor</artifact>
+							<includes>
+								<include>**</include>
+							</includes>
+						</filter>
+						<filter>
+							<artifact>xerces:xercesImpl</artifact>
+							<includes>
+								<include>org/apache/xerces/parsers/SAX*</include>
+							</includes>
+						</filter>
+						<filter>
+							<artifact>*:*</artifact>
+							<excludes>
+								<exclude>META-INF/*.SF</exclude>
+								<exclude>META-INF/*.DSA</exclude>
+								<exclude>META-INF/*.RSA</exclude>
+							</excludes>
+						</filter>
+					</filters>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>attach-all-in-one</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>bin/monkeytalk-java-${project.version}-all-in-one.jar</file>
+									<classifier>all-in-one</classifier>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.12</version>
+				<executions>
+					<execution>
+						<id>integration-test</id>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>verify</id>
+						<goals>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<reporting>
+		<outputDirectory>reports</outputDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<excludePackageNames>*.tools.*</excludePackageNames>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.gorillalogic.monkeytalk</groupId>
+			<artifactId>monkeytalk-processor</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+</project>

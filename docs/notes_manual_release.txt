@@ -1,0 +1,104 @@
+1. Update the pom.xml versions everywhere:
+mvn versions:set -DnewVersion=1.0.5.beta3
+
+cleanup the cruft:
+rm pom.xml.versionsBackup */pom.xml.versionsBackup
+
+get the missing stuff:
+vi monkeytalk-agent-ios/pom.xml
+
+2. Update the IDE via tycho (mostly works)
+cd monkeytalk-ide
+mvn org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=1.0.5.beta3
+
+Cleanup what was missed:
+vi pom.xml [NOTE: remove dangling <version> tag from bottom of file]
+vi monkeytalk-ide-product/MonkeyTalkIDE.product
+
+These guys use the .qualifier (which should be correctly updated by tycho):
+vi monkeytalk-ide-plugin/META-INF/MANIFEST.MF monkeytalk-ide-feature/feature.xml monkeytalk-ide-updatesite/site.xml monkeytalk-ide-product/MonkeyTalkIDE.product
+
+3. build everything locally first to make sure it works
+mvn clean install
+cd monkeytalk-ide
+mvn clean install
+
+4. checkin the version bump
+svn commit -m 'bump version to v1.0.5.beta3'
+
+5. wait for CI to complete successfully...
+
+6. update the demo apps with the latest agents from Artifactory (and latest monkeytalk-ant and monkeytalk-runner)
+run the updater.sh (there's one for both Android & iOS demo1 apps), and test
+
+iOS:
+edit updater.sh
+run ./updater.sh
+test via ./runner.sh
+svn del libMonkeyTalk-1.0.8.beta4c.a 
+svn add libMonkeyTalk-1.0.9.beta5.a 
+svn del tests/libs/monkeytalk-ant-1.0.8.beta4c.jar 
+svn add tests/libs/monkeytalk-ant-1.0.9.beta5.jar
+rm pom.xml.BAK Demo.xcodeproj/project.pbxproj.BAK
+svn commit -m 'bump iOS demo app to v1.0.9.beta5' .
+
+Android:
+edit updater.sh
+run ./updater.sh
+svn del app/libs/monkeytalk-agent-1.0.8.beta4c.jar
+svn add app/libs/monkeytalk-agent-1.0.9.beta5.jar 
+svn del tests/libs/monkeytalk-ant-1.0.8.beta4c.jar 
+svn add tests/libs/monkeytalk-ant-1.0.9.beta5.jar
+rm pom.xml.BAK app/.classpath.BAK app/build.xml.BAK
+svn commit -m 'bump Android demo app to v1.0.9.beta5' .
+
+6b. update the MTBrowser apps with the latest agents
+
+iOS:
+a. edit updater.sh
+b. run ./updater.sh
+c. update svn:
+svn del libMonkeyTalk-1.0.8.beta4c.a 
+svn add libMonkeyTalk-1.0.9.beta5.a
+d. cleanup:
+rm pom.xml.BAK MTBrowser.xcodeproj/project.pbxproj.BAK
+e. commit:
+svn commit -m 'bump iOS MTBrowser app to v1.0.9.beta5' .
+
+Android:
+a. edit updater.sh
+b. run ./updater.sh
+c. update svn:
+svn del MTBrowser/libs/monkeytalk-agent-1.0.8.beta4c.jar 
+svn add MTBrowser/libs/monkeytalk-agent-1.0.9.beta5.jar
+d. cleanup:
+rm pom.xml.BAK MTBrowser/.classpath.BAK MTBrowser/build.xml.BAK
+e. commit:
+svn commit -m 'bump Android MTBrowser app to v1.0.9.beta5' .
+
+7. run the releaser (which pulls from Artifactory, and thus requires CI to have run successfully)
+-- it is MUCH faster to run the releaser up on EC2 than to run it on your local machine.
+cd monkeytalk/monkeytalk-releaser
+ant releaser -Dversion=1.0.5.beta3
+
+8. scp all zips to gl.com
+cd bin/out
+scp -i ~/Documents/keys/ci.pem *.zip jshacklette@www.gorillalogic.com:
+
+9. copy the zips:
+cd /var/www/gorillalogic.com/www/htdocs/userfiles/private/monkeytalk/
+mv ~/monkeytalk* .
+
+9b. test the zips (you must first login to drupal):
+http://www.gorillalogic.com/userfiles/private/monkeytalk/monkeytalk-1.0.11.beta5c-mac64.zip
+
+9c. make 'em live:
+sudo bash update.sh 1.0.5.beta3
+
+10. update the website:
+- update forum with a release announcement
+- update download page with correct gl_track_activity version
+- update download page with correct version
+- make a google analytics note of the release date
+- update the What's New? page in the docs
+- make a blog post

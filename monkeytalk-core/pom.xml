@@ -1,0 +1,235 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>monkeytalk-core</artifactId>
+
+	<parent>
+		<groupId>com.gorillalogic.monkeytalk</groupId>
+		<artifactId>monkeytalk</artifactId>
+		<version>1.0.63-SNAPSHOT</version>
+	</parent>
+
+	<build>
+		<testResources>
+			<testResource>
+				<directory>resources/test</directory>
+				<targetPath>test</targetPath>
+			</testResource>
+		</testResources>
+		<plugins>
+			<!-- first we run our codegen -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>codegen-stamp</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<property environment="env" />
+								<property name="tool.build" value="${basedir}/bin/tool" />
+								<property name="tool.src"
+									value="${basedir}/src/com/gorillalogic/monkeytalk/tools" />
+								<property name="gen.target"
+									value="${basedir}/src/com/gorillalogic/monkeytalk/BuildStamp.java" />
+
+								<mkdir dir="${tool.build}" />
+
+								<javac srcdir="${tool.src}" destdir="${tool.build}"
+									includeantruntime="false" source="1.6" target="1.6" fork="yes">
+								</javac>
+
+								<java classname="com.gorillalogic.monkeytalk.tools.BuildStampGenerator">
+									<classpath>
+										<pathelement location="${tool.build}" />
+									</classpath>
+									<arg value="${gen.target}" />
+									<arg value="${project.version}" />
+									<arg value="${env.BUILD_NUMBER}" />
+									<arg value="// codegen-stamp" />
+									<arg value="// codegen-end" />
+								</java>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>svn-commit</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target if="svnuser">
+								<echo message="svn commit..." />
+								<exec executable="svn">
+									<arg
+										line="commit --username ${svnuser} --password ${svnpass} -m 'NO_CI monkeytalk-core stamp codegen' ." />
+								</exec>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- now, we can compile and test as usual -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<formats>
+						<format>xml</format>
+					</formats>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>**/monkeytalk/*.class</include>
+						<include>**/monkeytalk/agents/*.class</include>
+						<include>**/monkeytalk/automators/*.class</include>
+						<include>**/monkeytalk/finder/*.class</include>
+						<include>**/monkeytalk/parser/*.class</include>
+						<include>**/monkeytalk/sender/*.class</include>
+						<include>**/monkeytalk/server/*.class</include>
+						<include>**/monkeytalk/utils/*.class</include>
+						<include>**/monkeytalk/utils/exec/*.class</include>
+						<include>**/monkeytalk/verify/*.class</include>
+						<include>**/connectors/*.air</include>
+						<include>**/connectors/*.swc</include>
+					</includes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<includes>
+						<include>**/monkeytalk/*.java</include>
+						<include>**/monkeytalk/agents/*.java</include>
+						<include>**/monkeytalk/automators/*.java</include>
+						<include>**/monkeytalk/finder/*.java</include>
+						<include>**/monkeytalk/parser/*.java</include>
+						<include>**/monkeytalk/sender/*.java</include>
+						<include>**/monkeytalk/server/*.java</include>
+						<include>**/monkeytalk/utils/*.java</include>
+						<include>**/monkeytalk/utils/exec/*.java</include>
+						<include>**/monkeytalk/verify/*.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<excludePackageNames>*.tools.*</excludePackageNames>
+				</configuration>
+			</plugin>
+		</plugins>
+
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-antrun-plugin</artifactId>
+										<versionRange>[1.7,)</versionRange>
+										<goals>
+											<goal>run</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<reporting>
+		<outputDirectory>reports</outputDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8.1</version>
+				<configuration>
+					<excludePackageNames>*.tools.*</excludePackageNames>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<formats>
+						<format>html</format>
+						<format>xml</format>
+					</formats>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.gorillalogic.monkeytalk</groupId>
+			<artifactId>monkeytalk-meta</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.1.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<version>4.1.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-exec</artifactId>
+			<version>1.1</version>
+		</dependency>
+	</dependencies>
+</project>

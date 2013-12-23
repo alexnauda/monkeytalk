@@ -1,0 +1,471 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>zips</artifactId>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>com.gorillalogic.monkeytalk</groupId>
+		<artifactId>monkeytalk</artifactId>
+		<version>1.0.63-SNAPSHOT</version>
+	</parent>
+
+	<properties>
+		<bin.dir>${basedir}/bin</bin.dir>
+		<mt.dir>${bin.dir}/monkeytalk</mt.dir>
+		<agents.dir>${bin.dir}/monkeytalk-agents</agents.dir>
+		<out.dir>${bin.dir}/out</out.dir>
+		<tmp.dir>${bin.dir}/tmp</tmp.dir>
+	</properties>
+
+	<build>
+		<directory>bin</directory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.5.1</version>
+				<executions>
+					<execution>
+						<id>copy-agent</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<!-- runners -->
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk</groupId>
+									<artifactId>monkeytalk-ant</artifactId>
+									<version>${project.version}</version>
+									<destFileName>monkeytalk-ant-${project.version}.jar</destFileName>
+									<outputDirectory>${mt.dir}/ant</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk</groupId>
+									<artifactId>monkeytalk-runner</artifactId>
+									<version>${project.version}</version>
+									<destFileName>monkeytalk-runner-${project.version}.jar</destFileName>
+									<outputDirectory>${mt.dir}/runner</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.gorillalogic.cloud</groupId>
+									<artifactId>cloud-ant</artifactId>
+									<version>RELEASE</version>
+									<outputDirectory>${mt.dir}/cloud</outputDirectory>
+								</artifactItem>
+								
+								<!-- java API -->
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk</groupId>
+									<artifactId>monkeytalk-java</artifactId>
+									<version>${project.version}</version>
+									<classifier>all-in-one</classifier>
+									<outputDirectory>${mt.dir}/java</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk</groupId>
+									<artifactId>monkeytalk-java</artifactId>
+									<version>${project.version}</version>
+									<outputDirectory>${mt.dir}/java</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk</groupId>
+									<artifactId>monkeytalk-java</artifactId>
+									<version>${project.version}</version>
+									<classifier>javadoc</classifier>
+									<outputDirectory>${mt.dir}/java</outputDirectory>
+								</artifactItem>
+								
+								<!-- js-tools -->
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk</groupId>
+									<artifactId>monkeytalk-js</artifactId>
+									<version>${project.version}</version>
+									<classifier>shade</classifier>
+									<destFileName>monkeytalk-js-tools-${project.version}.jar</destFileName>
+									<outputDirectory>${mt.dir}/js-tools</outputDirectory>
+								</artifactItem>
+								
+								<!-- docs -->
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk</groupId>
+									<artifactId>monkeytalk-api-doc</artifactId>
+									<version>${project.version}</version>
+									<type>html</type>
+									<destFileName>apidoc.html</destFileName>
+									<outputDirectory>${mt.dir}/docs</outputDirectory>
+								</artifactItem>
+								
+								<!-- agents -->
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk</groupId>
+									<artifactId>monkeytalk-agent</artifactId>
+									<version>${project.version}</version>
+									<destFileName>monkeytalk-agent-${project.version}.jar</destFileName>
+									<outputDirectory>${mt.dir}/agents/android</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk</groupId>
+									<artifactId>monkeytalk-agent-ios</artifactId>
+									<version>${project.version}</version>
+									<type>a</type>
+									<destFileName>libMonkeyTalk-${project.version}.a</destFileName>
+									<outputDirectory>${mt.dir}/agents/ios</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk</groupId>
+									<artifactId>monkeytalk-agent-ios</artifactId>
+									<version>${project.version}</version>
+									<classifier>MediaPlayer</classifier>
+									<type>a</type>
+									<destFileName>libMonkeyTalkMediaPlayer-${project.version}.a</destFileName>
+									<outputDirectory>${mt.dir}/agents/ios/extralibs</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk</groupId>
+									<artifactId>monkeytalk-agent-flex-swc</artifactId>
+									<version>${project.version}</version>
+									<type>zip</type>
+									<destFileName>flex-agents.zip</destFileName>
+									<outputDirectory>${tmp.dir}</outputDirectory>
+								</artifactItem>
+								
+								<!-- app: Demo iOS -->
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk.demo</groupId>
+									<artifactId>monkeytalk-demo1-ios</artifactId>
+									<version>${project.version}</version>
+									<type>zip</type>
+									<destFileName>demo1-ios.zip</destFileName>
+									<outputDirectory>${tmp.dir}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk.demo</groupId>
+									<artifactId>monkeytalk-demo1-ios</artifactId>
+									<version>${project.version}</version>
+									<type>zip</type>
+									<classifier>app</classifier>
+									<destFileName>Demo1.app.zip</destFileName>
+									<outputDirectory>${mt.dir}/samples/ios</outputDirectory>
+								</artifactItem>
+								
+								<!-- app: MTBrowser iOS -->
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk.mtbrowser</groupId>
+									<artifactId>monkeytalk-mtbrowser-ios</artifactId>
+									<version>${project.version}</version>
+									<type>zip</type>
+									<destFileName>mtbrowser-ios.zip</destFileName>
+									<outputDirectory>${tmp.dir}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk.mtbrowser</groupId>
+									<artifactId>monkeytalk-mtbrowser-ios</artifactId>
+									<version>${project.version}</version>
+									<type>zip</type>
+									<classifier>app</classifier>
+									<destFileName>MTBrowser.app.zip</destFileName>
+									<outputDirectory>${mt.dir}/browser/ios</outputDirectory>
+								</artifactItem>
+								
+								<!-- app: Demo Android -->
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk.demo</groupId>
+									<artifactId>monkeytalk-demo1-android</artifactId>
+									<version>${project.version}</version>
+									<type>zip</type>
+									<destFileName>demo1-android.zip</destFileName>
+									<outputDirectory>${tmp.dir}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk.demo</groupId>
+									<artifactId>monkeytalk-demo1-android</artifactId>
+									<version>${project.version}</version>
+									<type>apk</type>
+									<destFileName>Demo1.apk</destFileName>
+									<outputDirectory>${mt.dir}/samples/android</outputDirectory>
+								</artifactItem>
+								
+								<!-- app: MTBrowser Android -->
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk.mtbrowser</groupId>
+									<artifactId>monkeytalk-mtbrowser-android</artifactId>
+									<version>${project.version}</version>
+									<type>zip</type>
+									<destFileName>mtbrowser-android.zip</destFileName>
+									<outputDirectory>${tmp.dir}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk.mtbrowser</groupId>
+									<artifactId>monkeytalk-mtbrowser-android</artifactId>
+									<version>${project.version}</version>
+									<type>apk</type>
+									<destFileName>MTBrowser.apk</destFileName>
+									<outputDirectory>${mt.dir}/browser/android</outputDirectory>
+								</artifactItem>
+								
+								<!-- windows IDE -->
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk.ide</groupId>
+									<artifactId>com.gorillalogic.monkeytalk.ide.product</artifactId>
+									<version>${project.version}</version>
+									<classifier>win32</classifier>
+									<type>win32.x86.zip</type>
+									<destFileName>ide-win32.zip</destFileName>
+									<outputDirectory>${tmp.dir}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk.ide</groupId>
+									<artifactId>com.gorillalogic.monkeytalk.ide.product</artifactId>
+									<version>${project.version}</version>
+									<classifier>win32</classifier>
+									<type>win32.x86_64.zip</type>
+									<destFileName>ide-win64.zip</destFileName>
+									<outputDirectory>${tmp.dir}</outputDirectory>
+								</artifactItem>
+								
+								<!-- mac IDE -->
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk.ide</groupId>
+									<artifactId>com.gorillalogic.monkeytalk.ide.product</artifactId>
+									<version>${project.version}</version>
+									<classifier>macosx</classifier>
+									<type>cocoa.x86.zip</type>
+									<destFileName>ide-mac32.zip</destFileName>
+									<outputDirectory>${tmp.dir}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk.ide</groupId>
+									<artifactId>com.gorillalogic.monkeytalk.ide.product</artifactId>
+									<version>${project.version}</version>
+									<classifier>macosx</classifier>
+									<type>cocoa.x86_64.zip</type>
+									<destFileName>ide-mac64.zip</destFileName>
+									<outputDirectory>${tmp.dir}</outputDirectory>
+								</artifactItem>
+								
+								<!-- linux IDE -->
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk.ide</groupId>
+									<artifactId>com.gorillalogic.monkeytalk.ide.product</artifactId>
+									<version>${project.version}</version>
+									<classifier>linux</classifier>
+									<type>gtk.x86.zip</type>
+									<destFileName>ide-linux32.zip</destFileName>
+									<outputDirectory>${tmp.dir}</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.gorillalogic.monkeytalk.ide</groupId>
+									<artifactId>com.gorillalogic.monkeytalk.ide.product</artifactId>
+									<version>${project.version}</version>
+									<classifier>linux</classifier>
+									<type>gtk.x86_64.zip</type>
+									<destFileName>ide-linux64.zip</destFileName>
+									<outputDirectory>${tmp.dir}</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>init-zip</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<echo message="init zip structure..." />
+								<copy todir="${mt.dir}">
+									<fileset dir="${basedir}/template" />
+								</copy>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>package-zip</id>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<echo message="${line.separator}packaging v${project.version} zips..." />
+								
+								<!-- flex agents -->
+								<unzip src="${tmp.dir}/flex-agents.zip" dest="${mt.dir}/agents/flex" />
+								
+								<!-- apps -->
+								<echo message="${line.separator}package apps..." />
+								<unzip src="${tmp.dir}/demo1-ios.zip" dest="${mt.dir}/samples/ios/Demo1" />
+								<copy file="${mt.dir}/agents/ios/libMonkeyTalk-${project.version}.a" todir="${mt.dir}/samples/ios/Demo1" />
+								<replace file="${mt.dir}/samples/ios/Demo1/Demo.xcodeproj/project.pbxproj" token="libMonkeyTalk.a" value="libMonkeyTalk-${project.version}.a" />
+		
+								<unzip src="${tmp.dir}/mtbrowser-ios.zip" dest="${mt.dir}/browser/ios/MTBrowser" />
+								<copy file="${mt.dir}/agents/ios/libMonkeyTalk-${project.version}.a" todir="${mt.dir}/browser/ios/MTBrowser" />
+								<replace file="${mt.dir}/browser/ios/MTBrowser/MTBrowser.xcodeproj/project.pbxproj" token="libMonkeyTalk.a" value="libMonkeyTalk-${project.version}.a" />
+								
+								<unzip src="${tmp.dir}/demo1-android.zip" dest="${mt.dir}/samples/android/Demo1" />
+								<copy file="${mt.dir}/agents/android/monkeytalk-agent-${project.version}.jar" todir="${mt.dir}/samples/android/Demo1/libs" />
+								<replace file="${mt.dir}/samples/android/Demo1/.classpath" token="monkeytalk-agent.jar" value="monkeytalk-agent-${project.version}.jar" />
+								<replace file="${mt.dir}/samples/android/Demo1/custom_rules.xml" token="monkeytalk-agent.jar" value="monkeytalk-agent-${project.version}.jar" />
+								
+								<unzip src="${tmp.dir}/mtbrowser-android.zip" dest="${mt.dir}/browser/android/MTBrowser" />
+								<copy file="${mt.dir}/agents/android/monkeytalk-agent-${project.version}.jar" todir="${mt.dir}/browser/android/MTBrowser/libs" />
+								<replace file="${mt.dir}/browser/android/MTBrowser/.classpath" token="monkeytalk-agent.jar" value="monkeytalk-agent-${project.version}.jar" />
+								<replace file="${mt.dir}/browser/android/MTBrowser/custom_rules.xml" token="monkeytalk-agent.jar" value="monkeytalk-agent-${project.version}.jar" />
+
+								<!-- IDEs -->
+								<echo message="${line.separator}package IDEs..." />
+								<zip destfile="${out.dir}/monkeytalk-${project.version}-win32.zip" basedir="${bin.dir}" includes="**/monkeytalk/**">
+									<zipfileset src="${tmp.dir}/ide-win32.zip" prefix="monkeytalk/MonkeyTalkIDE" />
+								</zip>
+								<zip destfile="${out.dir}/monkeytalk-${project.version}-win64.zip" basedir="${bin.dir}" includes="**/monkeytalk/**">
+									<zipfileset src="${tmp.dir}/ide-win64.zip" prefix="monkeytalk/MonkeyTalkIDE" />
+								</zip>
+								<zip destfile="${out.dir}/monkeytalk-${project.version}-mac32.zip" basedir="${bin.dir}" includes="**/monkeytalk/**">
+									<zipfileset src="${tmp.dir}/ide-mac32.zip" prefix="monkeytalk/MonkeyTalkIDE" />
+								</zip>
+								<zip destfile="${out.dir}/monkeytalk-${project.version}-mac64.zip" basedir="${bin.dir}" includes="**/monkeytalk/**">
+									<zipfileset src="${tmp.dir}/ide-mac64.zip" prefix="monkeytalk/MonkeyTalkIDE" />
+								</zip>
+								<zip destfile="${out.dir}/monkeytalk-${project.version}-linux32.zip" basedir="${bin.dir}" includes="**/monkeytalk/**">
+									<zipfileset src="${tmp.dir}/ide-linux32.zip" prefix="monkeytalk/MonkeyTalkIDE" />
+								</zip>
+								<zip destfile="${out.dir}/monkeytalk-${project.version}-linux64.zip" basedir="${bin.dir}" includes="**/monkeytalk/**">
+									<zipfileset src="${tmp.dir}/ide-linux64.zip" prefix="monkeytalk/MonkeyTalkIDE" />
+								</zip>
+								
+								<!-- agent package -->
+								<echo message="${line.separator}package agents..." />
+								<copy todir="${agents.dir}">
+									<fileset dir="${mt.dir}/agents" />
+								</copy>
+								<copy file="${basedir}/template/LICENSE.txt" todir="${agents.dir}" />
+								<zip destfile="${out.dir}/monkeytalk-${project.version}-agents.zip" basedir="${bin.dir}" includes="**/monkeytalk-agents/**" />
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>package-src-zip</id>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target if="svnuser">
+								<!-- build the monkeytalk-src.zip : we just zip everything under the main monkeytalk folder and call it good -->
+								<echo message="export monkeytalk-src from svn..." />
+								<exec executable="svn">
+									<arg line="export --username ${svnuser} --password ${svnpass} https://svn.gorillalogic.com/svn/monkeytalk/monkeytalk/trunk ${tmp.dir}/monkeytalk-src"/>
+								</exec>
+
+								<!-- delete the MonkeyTalkCloudTunnel and anything else that doesn't belong -->
+								<delete dir="${tmp.dir}/monkeytalk-src/MonkeyTalkCloudTunnel" />
+								<delete dir="${tmp.dir}/monkeytalk-src/workspace" />
+								<delete file="${tmp.dir}/monkeytalk-src/updater.sh" />
+
+								<echo message="create monkeytalk-src zip..." />
+								<zip destfile="${out.dir}/monkeytalk-${project.version}-src.zip" basedir="${tmp.dir}" includes="monkeytalk-src/**" />
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>archive-zip</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target if="archive">
+								<echo message="archive zips to ${archive}/${project.version}..." />
+								<mkdir dir="${archive}/${project.version}" />
+								<move todir="${archive}/${project.version}">
+									<fileset dir="${out.dir}">
+										<include name="**/monkeytalk-*"/>
+									</fileset>
+								</move>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>attach-artifacts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<!-- windows -->
+								<artifact>
+									<file>${out.dir}/monkeytalk-${project.version}-win32.zip</file>
+									<classifier>win32</classifier>
+									<type>zip</type>
+								</artifact>
+								<artifact>
+									<file>${out.dir}/monkeytalk-${project.version}-win64.zip</file>
+									<classifier>win64</classifier>
+									<type>zip</type>
+								</artifact>
+								
+								<!-- mac -->
+								<artifact>
+									<file>${out.dir}/monkeytalk-${project.version}-mac32.zip</file>
+									<classifier>mac32</classifier>
+									<type>zip</type>
+								</artifact>
+								<artifact>
+									<file>${out.dir}/monkeytalk-${project.version}-mac64.zip</file>
+									<classifier>mac64</classifier>
+									<type>zip</type>
+								</artifact>
+								
+								<!-- linux -->
+								<artifact>
+									<file>${out.dir}/monkeytalk-${project.version}-linux32.zip</file>
+									<classifier>linux32</classifier>
+									<type>zip</type>
+								</artifact>
+								<artifact>
+									<file>${out.dir}/monkeytalk-${project.version}-linux64.zip</file>
+									<classifier>linux64</classifier>
+									<type>zip</type>
+								</artifact>
+								
+								<!-- agents -->
+								<artifact>
+									<file>${out.dir}/monkeytalk-${project.version}-agents.zip</file>
+									<classifier>agents</classifier>
+									<type>zip</type>
+								</artifact>
+
+								<!-- src -->
+								<artifact>
+									<file>${out.dir}/monkeytalk-${project.version}-src.zip</file>
+									<classifier>src</classifier>
+									<type>zip</type>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies />
+</project>

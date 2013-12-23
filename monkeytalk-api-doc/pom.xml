@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>monkeytalk-api-doc</artifactId>
+
+	<parent>
+		<groupId>com.gorillalogic.monkeytalk</groupId>
+		<artifactId>monkeytalk</artifactId>
+		<version>1.0.63-SNAPSHOT</version>
+	</parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>apidoc.package</id>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<property name="doc.dir" value="${basedir}/bin/doc" />
+								<property name="doc.target" value="${doc.dir}/apidoc-${project.version}.html" />
+								
+								<mkdir dir="${doc.dir}" />
+
+								<echo message="generating api doc..." />
+								<java classname="com.gorillalogic.monkeytalk.api.doc.APIDocGenerator">
+									<classpath refid="maven.compile.classpath" />
+									<arg value="${doc.target}" />
+									<arg value="${project.version}" />
+								</java>
+								
+								<echo message="api doc: ${doc.target}" />
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>apidoc.attach</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>bin/doc/apidoc-${project.version}.html</file>
+									<type>html</type>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.gorillalogic.monkeytalk</groupId>
+			<artifactId>monkeytalk-meta</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+</project>

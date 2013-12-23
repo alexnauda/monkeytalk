@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>MT_ENABLE_AUTOEXIT</key>
+	<string>NO</string>
+	<key>MT_ENABLE_SCREENSHOT</key>
+	<string>NONE</string>
+	<key>MT_ENABLE_XML_REPORT</key>
+	<string>YES</string>
+</dict>
+</plist>
